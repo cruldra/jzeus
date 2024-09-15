@@ -1,4 +1,4 @@
-package jzeus.core.json
+package jzeus.json
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.BeanProperty

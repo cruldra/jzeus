@@ -1,4 +1,4 @@
-package jzeus.core.cls
+package jzeus.cls
 
 
 /**

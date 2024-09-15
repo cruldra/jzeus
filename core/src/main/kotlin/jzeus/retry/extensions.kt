@@ -1,6 +1,6 @@
-package jzeus.core.retry
+package jzeus.retry
 
-import jzeus.core.cls.isSub
+import jzeus.cls.isSub
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 

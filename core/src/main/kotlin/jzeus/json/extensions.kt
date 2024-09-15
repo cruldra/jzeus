@@ -1,4 +1,4 @@
-package jzeus.core.json
+package jzeus.json
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.type.TypeReference
@@ -16,7 +16,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule
-import jzeus.core.str.toDateTimeFormatter
+import jzeus.str.toDateTimeFormatter
 import java.io.File
 import java.io.InputStream
 import java.time.Duration

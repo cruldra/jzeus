@@ -1,4 +1,4 @@
-package jzeus.core.str
+package jzeus.str
 
 import java.time.format.DateTimeFormatter
 
