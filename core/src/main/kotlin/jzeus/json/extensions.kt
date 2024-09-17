@@ -1,10 +1,15 @@
 package jzeus.json
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
+import jzeus.any.Range
+import jzeus.json.gson.RangeTypeAdapter
 
 fun <R> gson(block: Gson.() -> R): R {
-    val gson = Gson()
+    val gson = GsonBuilder()
+        .registerTypeAdapter(Range::class.java, RangeTypeAdapter())
+        .create()
     return block(gson)
 }
 
@@ -12,7 +17,7 @@ fun <R> gson(block: Gson.() -> R): R {
  * 任意对象转换成`json`字符串
  */
 fun Any.toJsonString(): String = gson {
-    toJson(this)
+    toJson(this@toJsonString)
 }
 
 /**
@@ -38,8 +43,4 @@ fun String.isJson(): Boolean {
     } catch (e: Exception) {
         false
     }
-}
-
-fun main() {
-    print("1".isJson())
 }
