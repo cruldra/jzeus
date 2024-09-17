@@ -12,6 +12,10 @@ fun stringBuilder(str: String, block: StringBuilder.() -> Unit = {}): StringBuil
 }
 
 fun String.asCommandLine(): CommandLine = CommandLine.parse(this)
+
+/**
+ * 在追加字符串时,自动添加一个空格,通常用于构建命令行参数
+ */
 fun StringBuilder.appendWithSpace(str: String) {
     append(" $str")
 }

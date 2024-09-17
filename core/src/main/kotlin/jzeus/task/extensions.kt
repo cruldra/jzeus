@@ -3,6 +3,9 @@ package jzeus.task
 import cn.hutool.core.thread.ThreadFactoryBuilder
 import jzeus.cls.isSub
 import java.time.Duration
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalUnit
 import java.util.concurrent.*
 
 /**
@@ -39,6 +42,24 @@ fun <V> retry(
 }
 
 /**
+ * 满足条件时重试
+ *
+ * @param on 重试条件
+ * @param interval 重试间隔
+ * @param task 任务
+ */
+fun retry(on: () -> Boolean, interval: () -> Unit = {}, task: () -> Unit) {
+    while (on()) {
+        try {
+            task()
+            interval()
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+    }
+}
+
+/**
  * 在一个独立的线程中执行异步任务,任务执行完成或**收到中断信号(捕获到[InterruptedException])** 后自动关闭线程池
  * @param task Function0<Unit> 任务
  * @param threadName String 执行任务的线程的名称
@@ -67,4 +88,24 @@ object NamedExecutors {
 
     fun newSingleThreadScheduledExecutor(threadName: String): ScheduledExecutorService =
         Executors.newSingleThreadScheduledExecutor(getNamedThreadFactory(threadName))
+}
+
+/**
+ * 统计[过程][procedure]的执行时间
+ * @param timeUnit 返回的时间长度的单位
+ * @param procedure 被统计的过程
+ * @return 过程执行时间
+ */
+fun stopwatch(timeUnit: TemporalUnit = ChronoUnit.MILLIS, procedure: () -> Unit): Long {
+    val beginTime = LocalDateTime.now()
+    procedure()
+    return Duration.between(beginTime, LocalDateTime.now()).let {
+        when (timeUnit) {
+            ChronoUnit.MILLIS -> it.toMillis()
+            ChronoUnit.MINUTES -> it.toMinutes()
+            ChronoUnit.HOURS -> it.toHours()
+            ChronoUnit.DAYS -> it.toDays()
+            else -> it.get(timeUnit)
+        }
+    }
 }

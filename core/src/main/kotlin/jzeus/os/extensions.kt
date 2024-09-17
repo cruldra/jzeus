@@ -1,8 +1,9 @@
 package jzeus.os
 
+import jzeus.datetime.Timeout
+import jzeus.datetime.Timeouts
 import org.apache.commons.exec.*
 import java.io.File
-import java.time.Duration
 
 private class ExecLogHandler : LogOutputStream(1) {
     val lines = StringBuilder("")
@@ -12,13 +13,13 @@ private class ExecLogHandler : LogOutputStream(1) {
 }
 
 
-fun CommandLine.exec(workDir: File? = null, timeout: Duration = Duration.ofMinutes(1)): String {
+fun CommandLine.exec(workDir: File? = null, timeout: Timeout = Timeouts.NEVER): String {
     val executor = DefaultExecutor.Builder()
         .setWorkingDirectory(workDir)
         .get()
     executor.setExitValues(null)
     val watchdog = ExecuteWatchdog.Builder()
-        .setTimeout(timeout)
+        .setTimeout(timeout.duration)
         .get()
     executor.watchdog = watchdog
     val logHandler = ExecLogHandler()

@@ -2,6 +2,8 @@ package jzeus.net
 
 import java.io.IOException
 import java.net.ServerSocket
+import java.net.URI
+import java.net.URL
 
 
 /**
@@ -38,6 +40,22 @@ fun isPortAvailable(port: Int): Boolean {
             }
         }
     }
+}
+
+fun String.toURL(): java.net.URL {
+    return URI(this).toURL()
+}
+
+fun URL.getQueryParameter(name: String): String? {
+    val query = this.query?:""
+    val queryPairs = query.split("&")
+    for (pair in queryPairs) {
+        val keyValue = pair.split("=")
+        if (keyValue.size == 2 && keyValue[0] == name) {
+            return keyValue[1]
+        }
+    }
+    return null
 }
 
 fun main() {
