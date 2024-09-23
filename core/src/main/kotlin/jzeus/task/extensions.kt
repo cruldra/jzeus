@@ -48,13 +48,16 @@ fun <V> retry(
  * @param interval 重试间隔
  * @param task 任务
  */
-fun retry(on: () -> Boolean, interval: () -> Unit = {}, task: () -> Unit) {
-    while (on()) {
+fun retry(on: (Int) -> Boolean, interval: () -> Unit = {}, task: () -> Unit) {
+    var times = 1
+    while (on(times)) {
         try {
             task()
             interval()
         } catch (e: Throwable) {
             e.printStackTrace()
+        } finally {
+            times++
         }
     }
 }
