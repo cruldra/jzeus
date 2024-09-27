@@ -109,6 +109,13 @@
             <version>8.0.1.Final</version>
             <scope>provided</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.ebean/ebean-api -->
+        <dependency>
+            <groupId>io.ebean</groupId>
+            <artifactId>ebean-api</artifactId>
+            <version>15.6.0</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 
