@@ -1,9 +1,11 @@
 package jzeus.net
 
+import jzeus.any.print
+import jzeus.os.exec
+import jzeus.str.asCommandLine
+import okhttp3.internal.platform.Platform
 import java.io.IOException
-import java.net.ServerSocket
-import java.net.URI
-import java.net.URL
+import java.net.*
 
 
 /**
@@ -43,11 +45,15 @@ fun isPortAvailable(port: Int): Boolean {
 }
 
 fun String.toURL(): java.net.URL {
-    return URI(this).toURL()
+    return this.toURI().toURL()
+}
+
+fun String.toURI(): java.net.URI {
+    return URI(this)
 }
 
 fun URL.getQueryParameter(name: String): String? {
-    val query = this.query?:""
+    val query = this.query ?: ""
     val queryPairs = query.split("&")
     for (pair in queryPairs) {
         val keyValue = pair.split("=")
@@ -59,5 +65,9 @@ fun URL.getQueryParameter(name: String): String? {
 }
 
 fun main() {
-    print(isPortAvailable(3128))
+//    print(isPortAvailable(3128))
+//    print(getSystemProxy("https://api.heygen.com/".toURI()))
+    //print(System.getProperty("http.proxyHost"))
+    //print("reg query \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\" /v ProxyEnable /v ProxyServer".asCommandLine().exec())
+"""(Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings").ProxyServer""".asCommandLine().exec().print()
 }

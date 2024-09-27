@@ -9,10 +9,17 @@ fun Any?.truthValue(): Boolean {
         null -> false
         is Boolean -> this
         is Number -> this != 0 && this != 0.0
-        is String -> this.isNotEmpty() && this != "null" && this != "n" && this != "false" && this != "no"
+        is String -> this.isNotEmpty() && this.trim().let {
+            it != "null" && it != "n" && it != "false" && it != "no" && it != "0"
+        }
         is Collection<*> -> this.isNotEmpty()
         is Map<*, *> -> this.isNotEmpty()
         is Array<*> -> this.isNotEmpty()
         else -> true
     }
+}
+
+
+fun Any?.print() {
+    println(this)
 }
