@@ -4,8 +4,12 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
+import jzeus.any.Range
+import java.io.IOException
 import java.time.Duration
 import java.util.*
+
+
 /**
  * 这个格式化器主要目的是将[Duration]对象转换为一个更易读的字符串表示
  *
@@ -54,5 +58,20 @@ class LowerCaseEnumSerializer :
     StdSerializer<Enum<*>>(Enum::class.java, false) {
     override fun serialize(value: Enum<*>, gen: JsonGenerator, provider: SerializerProvider) {
         gen.writeString(value.name.lowercase(Locale.getDefault()))
+    }
+}
+
+
+class RangeSerializer : JsonSerializer<Range<*>>() {
+    @Throws(IOException::class)
+    override fun serialize(
+        src: Range<*>,
+        gen: JsonGenerator,
+        serializers: SerializerProvider
+    ) {
+        gen.writeStartArray()
+        gen.writeString(src.min.toString())
+        gen.writeString(src.max.toString())
+        gen.writeEndArray()
     }
 }

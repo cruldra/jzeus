@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer
@@ -14,12 +15,14 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule
+import jzeus.any.Range
 import jzeus.datetime.PopularDatetimeFormat
 import jzeus.datetime.dateFormatter
 import jzeus.datetime.dateTimeFormatter
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
+
 
 val objectMapper = ObjectMapper().apply {
     dateFormat = PopularDatetimeFormat.CN_DATETIME.dateFormatter
@@ -52,6 +55,10 @@ val objectMapper = ObjectMapper().apply {
     )
     registerModule(Jdk8Module())
     configure(WRITE_DATES_AS_TIMESTAMPS, false)
+
+    val module = SimpleModule()
+    module.addSerializer(Range::class.java, RangeSerializer())
+    registerModule(module)
 }
 
 

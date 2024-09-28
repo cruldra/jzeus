@@ -5,18 +5,27 @@ import com.moczul.ok2curl.logger.Logger
 import jzeus.failure.failure
 import jzeus.json.objectMapper
 import jzeus.log.LoggerDelegate
+import jzeus.net.http.retrofit2.RawStringConverterFactory
 import jzeus.os.getSystemProxy
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 import okhttp3.Response
+import okio.Buffer
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.io.ByteArrayOutputStream
 import java.time.Duration
 
 private val log by LoggerDelegate()
 fun OkHttpClient.Builder.autoDetectProxy(): OkHttpClient.Builder = apply {
     proxy(getSystemProxy().http)
 }
+
+fun OkHttpClient.Builder.addExceptionInterceptor(block: Response.() -> Pair<Int, String>): OkHttpClient.Builder =
+    apply {
+        addInterceptor(ExceptionInterceptor(block))
+    }
 
 fun OkHttpClient.Builder.addInterceptorBefore(
     beforeClass: Class<out Interceptor>,
@@ -42,6 +51,7 @@ fun createHttpClient(block: OkHttpClient.Builder.() -> Unit = {}) = OkHttpClient
 
 fun retrofit(block: Retrofit.Builder.() -> Unit = {}): Retrofit = Retrofit.Builder().apply {
     client(createHttpClient())
+    addConverterFactory(RawStringConverterFactory())
     addConverterFactory(JacksonConverterFactory.create(objectMapper))
 }.apply(block).build()
 
@@ -61,3 +71,9 @@ fun Response.raiseForStatus(block: Response.() -> Pair<Int, String>) {
         failure<Any>(message, code)
     }
 }
+
+
+val RequestBody.contentString: String
+    get() = Buffer().also {
+        this.writeTo(it)
+    }.readUtf8()
