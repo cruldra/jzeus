@@ -1,4 +1,4 @@
-package jzeus.net.http.retrofit2
+package jzeus.net.http.client.retrofit2
 
 import okhttp3.ResponseBody
 import retrofit2.Converter

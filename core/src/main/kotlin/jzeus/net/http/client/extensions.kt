@@ -1,11 +1,11 @@
-package jzeus.net.http
+package jzeus.net.http.client
 
 import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Logger
 import jzeus.failure.failure
 import jzeus.json.objectMapper
 import jzeus.log.LoggerDelegate
-import jzeus.net.http.retrofit2.RawStringConverterFactory
+import jzeus.net.http.client.retrofit2.RawStringConverterFactory
 import jzeus.os.getSystemProxy
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -14,7 +14,6 @@ import okhttp3.Response
 import okio.Buffer
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import java.io.ByteArrayOutputStream
 import java.time.Duration
 
 private val log by LoggerDelegate()

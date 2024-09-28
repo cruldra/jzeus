@@ -1,4 +1,4 @@
-package jzeus.net.http
+package jzeus.net.http.client
 
 import jzeus.crypto.decryptAES
 import jzeus.crypto.encryptAES
