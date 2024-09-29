@@ -3,10 +3,12 @@ package jzeus.db
 import io.ebean.annotation.WhenCreated
 import io.ebean.annotation.WhenModified
 import jakarta.persistence.Id
+import jakarta.persistence.MappedSuperclass
 import jakarta.persistence.Version
 import java.time.LocalDateTime
 
-open class  BaseModel {
+@MappedSuperclass
+open class BaseModel {
     @Id
     var id: Long? = null
 

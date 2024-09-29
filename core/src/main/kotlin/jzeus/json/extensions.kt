@@ -58,6 +58,7 @@ val objectMapper = ObjectMapper().apply {
 
     val module = SimpleModule()
     module.addSerializer(Range::class.java, RangeSerializer())
+    module.addDeserializer(Range::class.java, RangeDeserializer())
     registerModule(module)
 }
 

@@ -55,3 +55,14 @@ fun <E> MutableList<E>.addAndGet(element: E): E {
     this.add(element)
     return element
 }
+
+/**
+ * 如果列表为空,则抛出异常
+ * @param message 异常信息
+ */
+fun <E> Collection<E>?.raiseForEmpty(message: String): Collection<E> {
+    if (this.isNullOrEmpty()) {
+        throw NoSuchElementException(message)
+    }
+    return this
+}
