@@ -16,7 +16,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.File
 import java.time.Duration
 
-private val log by LoggerDelegate()
+val applicationJsonHeader = "Content-Type" to "application/json; charset=utf-8"
 fun OkHttpClient.Builder.autoDetectProxy(): OkHttpClient.Builder = apply {
     proxy(getSystemProxy().http)
 }
@@ -38,6 +38,7 @@ fun OkHttpClient.Builder.addInterceptorBefore(
     }
 
 fun createHttpClient(block: OkHttpClient.Builder.() -> Unit = {}) = OkHttpClient.Builder().apply {
+    val log by LoggerDelegate()
     callTimeout(Duration.ofMinutes(1))
     readTimeout(Duration.ofMinutes(5))
     connectTimeout(Duration.ofSeconds(30))
@@ -76,6 +77,7 @@ val RequestBody.contentString: String
     get() = Buffer().also {
         this.writeTo(it)
     }.readUtf8()
+
 fun File.toMultipartBodyPart(paramName: String, mediaType: String = "application/octet-stream"): MultipartBody.Part {
     // 创建 RequestBody
     val requestBody = this.asRequestBody(mediaType.toMediaTypeOrNull())

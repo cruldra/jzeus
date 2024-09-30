@@ -25,6 +25,27 @@ class ExceptionInterceptor(private val block: Response.() -> Pair<Int, String>) 
     }
 }
 
+/**
+ * 这个拦截器用于添加公共头部
+ * @author dongjak
+ * @created 2024/10/01
+ * @version 1.0
+ * @since 1.0
+ */
+class CommonHeadersInterceptor(private vararg val headers: Pair<String, String>) : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+        val requestBuilder = request.newBuilder()
+
+        // 遍历所有提供的头部，并添加到请求中
+        headers.forEach { (name, value) ->
+            requestBuilder.addHeader(name, value)
+        }
+
+        val newRequest = requestBuilder.build()
+        return chain.proceed(newRequest)
+    }
+}
 
 /**
  * 有些接口需要授权才能访问,通常是一个`Authorization`头,这个拦截器用于添加这个头
@@ -43,6 +64,7 @@ class AuthorizationHeaderInterceptor(private val value: String, private val name
         return chain.proceed(request)
     }
 }
+
 /**
  * 这个拦截器使用`aes`在请求之前和响应之后对`请求体`和`响应体`进行加密和解密
  * @author dongjak
