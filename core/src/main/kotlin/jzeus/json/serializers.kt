@@ -40,7 +40,25 @@ class PrettyDurationSerializer : JsonSerializer<Duration>() {
     }
 }
 
-
+/**
+ * 用`短横线命名法`序列化枚举
+ *
+ * ```kotlin
+ * enum class TestEnum {
+ *      A_B,C_D,E_F
+ * }
+ * val objectMapper = ObjectMapperBuilder.build()
+ * val enum = TestEnum.A_B
+ * val json = objectMapper.writeValueAsString(enum)
+ * log.info(json) // "a-b"
+ *  ```
+ */
+class KebabCaseEnumSerializer :
+    StdSerializer<Enum<*>>(Enum::class.java, false) {
+    override fun serialize(value: Enum<*>, gen: JsonGenerator, provider: SerializerProvider) {
+        gen.writeString(value.name.lowercase(Locale.getDefault()).replace("_", "-"))
+    }
+}
 /**
  * 序列化枚举为小写字符串
  *

@@ -7,13 +7,13 @@ import jzeus.json.objectMapper
 import jzeus.log.LoggerDelegate
 import jzeus.net.http.client.retrofit2.RawStringConverterFactory
 import jzeus.os.getSystemProxy
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.RequestBody
-import okhttp3.Response
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.asRequestBody
 import okio.Buffer
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.io.File
 import java.time.Duration
 
 private val log by LoggerDelegate()
@@ -76,3 +76,10 @@ val RequestBody.contentString: String
     get() = Buffer().also {
         this.writeTo(it)
     }.readUtf8()
+fun File.toMultipartBodyPart(paramName: String, mediaType: String = "application/octet-stream"): MultipartBody.Part {
+    // 创建 RequestBody
+    val requestBody = this.asRequestBody(mediaType.toMediaTypeOrNull())
+
+    // 创建 MultipartBody.Part
+    return MultipartBody.Part.createFormData(paramName, this.name, requestBody)
+}

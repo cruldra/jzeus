@@ -1,10 +1,12 @@
 package jzeus.crypto
 
+import jzeus.any.print
 import java.security.SecureRandom
 import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
+
 
 class AESCipher(keyString: String) {
     private val key: SecretKeySpec
@@ -52,7 +54,30 @@ class AESCipher(keyString: String) {
     }
 }
 
+object SecretKeyGenerator {
+    fun generateKey(): String {
+        val alphaNumericString = "abcdefghijklmnopqrstuvwxyz0123456789"
+        val prefix = "sk-"
+        val keyLength = 48 // 不包括前缀的长度
+        val builder = StringBuilder()
+        val random = SecureRandom()
+
+        // 添加前缀
+        builder.append(prefix)
+
+        // 生成随机字符串
+        for (i in 0 until keyLength) {
+            val index = random.nextInt(alphaNumericString.length)
+            builder.append(alphaNumericString[index])
+        }
+
+        return builder.toString()
+    }
+}
+
 fun main() {
 //    print("abc111".encryptAES("GgH7yHMPj3c2oyx"))
-    print("N7A0Vc7ST8Ku4emLtpKKxiiV6bYq5EAUAGwCt41YhFA=".decryptAES("GgH7yHMPj3c2oyx"))
+//    print("N7A0Vc7ST8Ku4emLtpKKxiiV6bYq5EAUAGwCt41YhFA=".decryptAES("GgH7yHMPj3c2oyx"))
+
+    SecretKeyGenerator.generateKey().print()
 }
