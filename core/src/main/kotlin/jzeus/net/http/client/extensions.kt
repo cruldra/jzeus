@@ -11,6 +11,7 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
 import okio.Buffer
+import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.File
@@ -48,6 +49,16 @@ fun createHttpClient(block: OkHttpClient.Builder.() -> Unit = {}) = OkHttpClient
         }
     }))
 }.apply(block).build()
+
+fun Retrofit.Builder.addConverterFactoryBefore(
+    beforeClass: Class<out Converter.Factory>,
+    converterFactory: Converter.Factory
+): Retrofit.Builder = apply {
+    val converters = this.converterFactories()
+    converters.add(converters.indexOfFirst {
+        it.javaClass.name == beforeClass.name
+    }, converterFactory)
+}
 
 fun retrofit(block: Retrofit.Builder.() -> Unit = {}): Retrofit = Retrofit.Builder().apply {
     client(createHttpClient())
