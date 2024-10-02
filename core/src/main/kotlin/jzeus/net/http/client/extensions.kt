@@ -19,7 +19,9 @@ import java.time.Duration
 
 val applicationJsonHeader = "Content-Type" to "application/json; charset=utf-8"
 fun OkHttpClient.Builder.autoDetectProxy(): OkHttpClient.Builder = apply {
-    proxy(getSystemProxy().http)
+    getSystemProxy()?.http?.apply {
+        proxy(this)
+    }
 }
 
 fun OkHttpClient.Builder.addExceptionInterceptor(block: Response.() -> Pair<Int, String>): OkHttpClient.Builder =

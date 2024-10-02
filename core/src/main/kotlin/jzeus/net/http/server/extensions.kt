@@ -1,6 +1,7 @@
 package jzeus.net.http.server
 
 import io.javalin.http.Context
+import io.javalin.http.HttpStatus
 import jzeus.uuid.uuid
 import java.io.File
 import java.nio.file.Files
@@ -13,6 +14,11 @@ fun <T> Context.jsonBody(clazz: Class<T>): T {
 fun Context.resultString(result: String) {
     result(result)
     contentType("text/plain; charset=utf-8")
+}
+
+fun Context.internalServerError(data: Any) {
+    json(data)
+    status(HttpStatus.INTERNAL_SERVER_ERROR)
 }
 
 fun Context.getFile(fileName: String = "file"): File? = uploadedFile(fileName)?.let { file ->

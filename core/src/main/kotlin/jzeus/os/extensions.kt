@@ -55,7 +55,7 @@ fun main() {
     print(getSystemProxy())
 }
 
-fun getSystemProxy(): Proxies {
+fun getSystemProxy(): Proxies? {
     if (OSVersion.WIN11.matched) {
         val proxyIsEnabled =
             """powershell -Command "Write-Output ((Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings').ProxyEnable)"""".asCommandLine()
@@ -72,7 +72,7 @@ fun getSystemProxy(): Proxies {
         )
 
     }
-    TODO()
+    return null
 }
 
 val OSVersion.matched: Boolean
