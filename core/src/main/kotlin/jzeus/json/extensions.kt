@@ -3,6 +3,7 @@ package jzeus.json
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
 import com.fasterxml.jackson.databind.module.SimpleModule
@@ -15,6 +16,9 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule
+import com.github.victools.jsonschema.generator.*
+import com.github.victools.jsonschema.module.jakarta.validation.JakartaValidationModule
+import com.github.victools.jsonschema.module.jakarta.validation.JakartaValidationOption
 import jzeus.any.Range
 import jzeus.datetime.PopularDatetimeFormat
 import jzeus.datetime.dateFormatter
@@ -83,4 +87,26 @@ fun String.isJson(): Boolean = try {
     true
 } catch (e: Exception) {
     false
+}
+
+
+fun Class<*>.toJsonSchema(): String {
+    val jakartaValidationModule = JakartaValidationModule(
+        JakartaValidationOption.NOT_NULLABLE_FIELD_IS_REQUIRED,
+        JakartaValidationOption.INCLUDE_PATTERN_EXPRESSIONS
+    )
+    val configBuilder = SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2020_12, OptionPreset.PLAIN_JSON)
+    /* configBuilder.forFields().withRequiredCheck {field->
+         field.getAnnotation(org.jetbrains.annotations.NotNull::class.java) !=null
+     }*/
+    val config: SchemaGeneratorConfig =
+        configBuilder
+            .with(jakartaValidationModule)
+            .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
+            .without(Option.FLATTENED_ENUMS_FROM_TOSTRING)
+            .build()
+
+    val generator = SchemaGenerator(config)
+    val jsonSchema: JsonNode = generator.generateSchema(this)
+    return jsonSchema.toJsonString()
 }
