@@ -15,10 +15,10 @@ data class Offset(
 
 data class Size(
     val width: Int = 0,
-    val height: Int = 0
+    val height: Int = 0,
+    val ratio: String? = null
 )
 
 object Sizes {
-
-    val Douyin = Size(1080, 1920)
+    val Douyin = Size(1080, 1920, "9:16")
 }
