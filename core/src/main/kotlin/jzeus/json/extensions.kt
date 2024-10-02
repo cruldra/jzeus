@@ -78,6 +78,8 @@ fun Any.toJsonString(): String = objectMapper.writeValueAsString(this)
  * @param clazz 对象类型
  */
 fun <T> String.toJavaObject(clazz: Class<T>): T = objectMapper.readValue(this, clazz)
+fun <T> String.readList(clazz: Class<T>): List<T> =
+    objectMapper.readValue(this, objectMapper.typeFactory.constructCollectionType(List::class.java, clazz))
 
 /**
  * 检查字符串是否为JSON
