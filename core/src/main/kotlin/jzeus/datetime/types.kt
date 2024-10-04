@@ -1,8 +1,6 @@
 package jzeus.datetime
 
-import java.text.SimpleDateFormat
 import java.time.Duration
-import java.time.format.DateTimeFormatter
 
 class Timeout(private val milliseconds: Long) {
 
