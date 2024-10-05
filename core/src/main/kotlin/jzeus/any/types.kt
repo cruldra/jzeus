@@ -19,6 +19,11 @@ data class Size(
     val ratio: String? = null
 )
 
+data class Position(
+    val offset: Offset = Offset(),
+    val size: Size = Size()
+)
+
 object Sizes {
     val Douyin = Size(1080, 1920, "9:16")
 }

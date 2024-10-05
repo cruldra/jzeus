@@ -6,14 +6,12 @@ import jzeus.uuid.uuid
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-
-fun <T> Context.jsonBody(clazz: Class<T>): T {
-    return this.bodyAsClass(clazz)
-}
-
 fun Context.resultString(result: String) {
     result(result)
     contentType("text/plain; charset=utf-8")
+}
+fun Context.resultJson(data: Any) {
+   json(data)
 }
 
 fun Context.internalServerError(data: Any) {
@@ -54,3 +52,4 @@ fun Context.getFile(fileName: String = "file"): File? = uploadedFile(fileName)?.
         null
     }
 }
+fun Context.queryParamOrNull(name: String): String? = queryParam(name)?.trim()?.takeIf { it.isNotEmpty() }
