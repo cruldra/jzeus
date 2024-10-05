@@ -55,3 +55,12 @@ fun ProcessEngine.runProcess(processKey: String, variables: Map<String, Any> = e
 fun <T> DelegateExecution.getJsonVariable(name: String, clazz: Class<T>): T {
     return (getVariable(name) as String).toJavaObject(clazz)
 }
+
+/**
+ * 在`camunda`引擎中完成一个任务,通常用于用户任务
+ * @param taskId 任务ID
+ * @param variables 流程变量
+ */
+fun ProcessEngine.completeTask(taskId: String, variables: Map<String, Any> = emptyMap()) {
+    taskService.complete(taskId, variables)
+}
