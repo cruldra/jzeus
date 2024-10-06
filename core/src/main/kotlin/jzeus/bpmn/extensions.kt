@@ -6,6 +6,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.impl.cfg.StandaloneProcessEngineConfiguration
 import org.camunda.bpm.engine.repository.Deployment
 import org.camunda.bpm.engine.runtime.ProcessInstance
+import org.camunda.bpm.engine.task.Task
 
 fun camunda(block: StandaloneProcessEngineConfiguration.() -> Unit): ProcessEngine =
     StandaloneProcessEngineConfiguration()
@@ -58,9 +59,33 @@ fun <T> DelegateExecution.getJsonVariable(name: String, clazz: Class<T>): T {
 
 /**
  * 在`camunda`引擎中完成一个任务,通常用于用户任务
- * @param taskId 任务ID
- * @param variables 流程变量
+ * @param_task_id_任务id
+ * @param_variables_流程变量
  */
 fun ProcessEngine.completeTask(taskId: String, variables: Map<String, Any> = emptyMap()) {
     taskService.complete(taskId, variables)
+}
+
+/**
+ * 根据任务ID获取任务
+ * @author dongjak
+ * @created 2024/10/06
+ * @version 1.0
+ * @since 1.0
+ */
+fun ProcessEngine.getTaskById(taskId: String): Task {
+    return taskService.createTaskQuery().taskId(taskId).singleResult()
+}
+
+/**
+ * 获取任务变量
+ * @author dongjak
+ * @created 2024/10/06
+ * @version 1.0
+ * @since 1.0
+ */
+fun ProcessEngine.getTaskVariable(taskId: String, name: String): Any? {
+    val task = getTaskById(taskId)
+    val processInstanceId = task.processInstanceId
+    return runtimeService.getVariable(processInstanceId, name)
 }
