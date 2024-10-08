@@ -1,10 +1,9 @@
 package jzeus.net.http.server
 
-import io.javalin.Javalin
-import io.javalin.plugin.Plugin
+import io.javalin.config.JavalinConfig
 import io.javalin.http.Context
 import io.javalin.http.Handler
-import io.javalin.config.JavalinConfig
+import io.javalin.plugin.Plugin
 import java.util.function.Consumer
 
 class AuthenticationPlugin(userConfig: Consumer<Config>? = null) :

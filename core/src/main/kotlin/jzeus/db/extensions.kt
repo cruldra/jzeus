@@ -37,3 +37,13 @@ fun <T, R> PagedList<T>.map(mapper: (T) -> R): PagedList<R> {
         override fun getDisplayXtoYofZ(to: String?, of: String?) = this@map.getDisplayXtoYofZ(to, of)
     }
 }
+
+fun <T, R> PagedList<T>.toDataPage(mapper: (T) -> R): DataPage<R> {
+    return DataPage(
+        pageNo = this.pageIndex,
+        pageSize = this.pageSize,
+        total = this.totalCount,
+        data = this.list.map(mapper),
+        hasNext = this.hasNext()
+    )
+}
