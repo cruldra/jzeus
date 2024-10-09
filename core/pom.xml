@@ -160,14 +160,18 @@
             <version>1.47.0</version>
             <scope>provided</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform -->
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna-platform</artifactId>
             <version>5.15.0</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.ini4j</groupId>
+            <artifactId>ini4j</artifactId>
+            <version>0.5.4</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

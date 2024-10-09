@@ -10,7 +10,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
-        <module>io</module>
         <module>rpc</module>
     </modules>
     <properties>

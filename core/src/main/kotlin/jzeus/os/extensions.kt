@@ -52,7 +52,11 @@ fun main() {
 //    System.getProperty("os.name").print()
 //    System.getProperty("os.version").print()
 //
-    print(getSystemProxy())
+//    print(getSystemProxy())
+    """ powershell -Command "& {Get-Process | Where-Object { ${"$"}_.Name -like '*JianyingPro*' } | Select-Object Id,Name | ConvertTo-Json}" """
+        .asCommandLine()
+        .exec()
+        .print()
 }
 
 fun getSystemProxy(): Proxies? {

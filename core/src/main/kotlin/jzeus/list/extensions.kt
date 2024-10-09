@@ -56,6 +56,10 @@ fun <E> MutableList<E>.addAndGet(element: E): E {
     return element
 }
 
+fun <E> List<E>.add(element: E): Boolean {
+    return (this as MutableList<E>).add(element)
+}
+
 /**
  * 如果列表为空,则抛出异常
  * @param message 异常信息

@@ -1,20 +1,10 @@
 package jzeus.jianying
 
-import cn.hutool.core.util.ReflectUtil
-import com.sun.jna.Pointer
-import com.sun.jna.platform.win32.Kernel32
-import com.sun.jna.platform.win32.WinBase
-import com.sun.jna.platform.win32.WinDef
-import com.sun.jna.platform.win32.WinNT
-import jzeus.datetime.Timeouts
 import jzeus.os.exec
-import jzeus.process.PID
 import jzeus.process.kill
+import jzeus.process.pids
+import jzeus.process.toProcessName
 import jzeus.str.asCommandLine
-import org.apache.commons.exec.DefaultExecuteResultHandler
-import org.apache.commons.exec.DefaultExecutor
-import org.apache.commons.exec.ExecuteStreamHandler
-import org.apache.commons.exec.ExecuteWatchdog
 import java.io.File
 
 
@@ -50,48 +40,36 @@ interface JianyingDesktopUIElementLocators : UIElementLocators {
  */
 class JianyingDesktopService(
     private val executablePath: String,
+    private val draftDir: File,
     private val clickniumService: ClickniumService,
     private val locators: JianyingDesktopUIElementLocators = object : JianyingDesktopUIElementLocators {
         override val clipWindow: String
             get() = "locator.jianyingpro.剪辑窗口"
     }
 ) {
-    val version by lazy {
-        val commandLine = executablePath.asCommandLine()
-        /*val executor = DefaultExecutor.Builder()
-            .get()
-        val resultHandler = DefaultExecuteResultHandler()
 
-        val watchdog = ExecuteWatchdog.Builder()
-            .setTimeout(Timeouts.minutes(1).duration)
-            .get()
-        executor.watchdog = watchdog
-        try {
-            // 异步执行命令
-            executor.execute(commandLine, resultHandler)
-
-            // 等待一段时间
-            Thread.sleep(5000) // 等待5秒
-
-            // watchdog.destroyProcess()
-            // 获取进程PID
-            val pid = executor.getProcessId()
-            println("Process PID: $pid")
-
-            // 使用taskkill命令强制终止进程及其所有子进程
-            pid.kill()
-            // 等待进程完全终止
-            resultHandler.waitFor()
-
-            println("Exit value: ${resultHandler.exitValue}")
-        } catch (e: Exception) {
-            e.printStackTrace()
-            println("Error: ${e.message}")
-        }*/
+    companion object {
+        private val PROCESS_NAME = "JianyingPro.exe".toProcessName()
     }
 
-    val draftDir by lazy {
-        File("")
+    /**
+     * 启动剪映桌面版客户端
+     *
+     * @return 是否启动成功
+     */
+    fun start(): Boolean {
+        executablePath.asCommandLine().exec()
+        return PROCESS_NAME.pids.isNotEmpty()
     }
 
+    /**
+     * 关闭剪映桌面版客户端
+     * @return 是否关闭成功
+     */
+    fun stop(): Boolean {
+        val res = PROCESS_NAME.pids.all {
+            it.kill()
+        }
+        return res or PROCESS_NAME.pids.isEmpty()
+    }
 }
