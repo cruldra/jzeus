@@ -1,10 +1,12 @@
 package jzeus.any
 
+import jzeus.failure.failure
+
 
 /**
  * 将任意值转换为布尔值,类似于`Python`中的[`bool()`](https://poe.com/s/hsftI6p1jZZgI6wYY2nw)函数
  */
-fun Any?.truthValue(): Boolean {
+fun <T> T.truthValue(): Boolean {
     return when (this) {
         null -> false
         is Boolean -> this
@@ -12,6 +14,7 @@ fun Any?.truthValue(): Boolean {
         is String -> this.isNotEmpty() && this.trim().let {
             it != "null" && it != "n" && it != "false" && it != "no" && it != "0"
         }
+
         is Collection<*> -> this.isNotEmpty()
         is Map<*, *> -> this.isNotEmpty()
         is Array<*> -> this.isNotEmpty()
@@ -20,6 +23,12 @@ fun Any?.truthValue(): Boolean {
 }
 
 
-fun Any?.print() {
+fun <T> T.print() {
     println(this)
+}
+
+
+fun <T> T.raiseForNull(message: String): Any? {
+    if (this == null) failure<Any>(message)
+    return this
 }

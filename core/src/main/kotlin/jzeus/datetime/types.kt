@@ -13,12 +13,14 @@ class Timeout(private val milliseconds: Long) {
 
 object Timeouts {
     val NEVER = Timeout(Long.MAX_VALUE)
+
+    fun minutes(minutes: Long) = Timeout(minutes * 60 * 1000)
 }
 
 /**
  * 常用的日期时间格式
  */
-enum class PopularDatetimeFormat(  val value: String) {
+enum class PopularDatetimeFormat(val value: String) {
     /**
      * 中国大陆常用的日期时间格式,示例:```2019-02-03 14:32:19```
      */
