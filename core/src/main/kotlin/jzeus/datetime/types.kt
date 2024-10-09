@@ -13,7 +13,7 @@ class Timeout(private val milliseconds: Long) {
 
 object Timeouts {
     val NEVER = Timeout(Long.MAX_VALUE)
-
+    val ONE_SECOND = Timeout(1000)
     fun minutes(minutes: Long) = Timeout(minutes * 60 * 1000)
 }
 

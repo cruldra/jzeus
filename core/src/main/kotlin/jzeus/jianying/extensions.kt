@@ -2,12 +2,24 @@ package jzeus.jianying
 
 import jzeus.any.Size
 import jzeus.failure.failure
-import jzeus.file.newSubFile
+import jzeus.file.subFile
 import jzeus.file.raiseForNotDirectory
 import jzeus.json.objectMapper
 import jzeus.list.add
 import java.io.File
 
+fun <R> JianyingDesktop.use(block: JianyingDesktop.() -> R): R {
+    try {
+        this.start()
+        return block(this)
+    } finally {
+        this.stop()
+    }
+}
+fun ClickniumService.sleep(seconds:Long):ClickniumService{
+    jzeus.async.sleep(seconds)
+    return this
+}
 fun Draft.Draft.resize(size: Size) {
     this.content.canvasConfig =
         Draft.CanvasConfig(
@@ -96,14 +108,14 @@ fun Draft.Draft.addTextTrack(text: String, maxLengthPerSegment: Int = 500): Draf
 
 
 fun Draft.Draft.save(rootDir: File): Draft.Draft {
-    val draftDir = rootDir.newSubFile(this.name)
+    val draftDir = rootDir.subFile(this.name)
     draftDir.mkdirs()
     draftDir.raiseForNotDirectory("保存草稿失败,因为[${draftDir.absolutePath}]不是一个目录")
     this.files = Draft.Draft.Files(
-        draftDir.newSubFile("draft_meta_info.json") {
+        draftDir.subFile("draft_meta_info.json") {
             objectMapper.writeValue(this, this@save.meta)
         },
-        draftDir.newSubFile("draft_content.json") {
+        draftDir.subFile("draft_content.json") {
             objectMapper.writeValue(this, this@save.content)
         }
     )
