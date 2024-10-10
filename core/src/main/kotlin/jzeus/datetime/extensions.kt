@@ -3,6 +3,7 @@ package jzeus.datetime
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -36,4 +37,16 @@ fun Date.toLocalDateTime(): LocalDateTime {
  */
 fun LocalDateTime.plusTimeout(timeout: Timeout): LocalDateTime {
     return this.plus(timeout.duration)
+}
+
+val LocalDateTime.timestamp: Long
+    get() = this.toInstant(ZoneOffset.UTC).toEpochMilli()
+
+/**
+ * 使用流行的格式对这个日期时间进行格式化
+ * @param format 格式
+ * @return 格式化后的字符串
+ */
+fun LocalDateTime.formatPopular(format: PopularDatetimeFormat): String {
+    return this.format(format.dateTimeFormatter)
 }

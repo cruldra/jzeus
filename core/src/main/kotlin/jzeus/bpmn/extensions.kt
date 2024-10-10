@@ -1,9 +1,13 @@
 package jzeus.bpmn
 
+import cn.hutool.core.util.ReflectUtil
 import jzeus.json.toJavaObject
 import org.camunda.bpm.engine.ProcessEngine
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.camunda.bpm.engine.impl.bpmn.delegate.JavaDelegateInvocation
 import org.camunda.bpm.engine.impl.cfg.StandaloneProcessEngineConfiguration
+import org.camunda.bpm.engine.impl.delegate.DelegateInvocation
+import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.Deployment
 import org.camunda.bpm.engine.runtime.ProcessInstance
 import org.camunda.bpm.engine.task.Task
@@ -88,4 +92,13 @@ fun ProcessEngine.getTaskVariable(taskId: String, name: String): Any? {
     val task = getTaskById(taskId)
     val processInstanceId = task.processInstanceId
     return runtimeService.getVariable(processInstanceId, name)
+}
+
+fun DelegateInvocation.getVariable(name: String): Any? {
+    if (this is JavaDelegateInvocation) {
+        val execution = ReflectUtil.getFieldValue(this, "execution") as ExecutionEntity
+        return execution.getVariable(name)
+    }
+
+    return null
 }
