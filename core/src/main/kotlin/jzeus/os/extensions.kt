@@ -57,6 +57,8 @@ fun main() {
         .asCommandLine()
         .exec()
         .print()
+
+
 }
 
 fun getSystemProxy(): Proxies? {
