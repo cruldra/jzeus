@@ -53,6 +53,7 @@ class EBeanH2Lock(private val database: Database) : DatabaseLock {
         ).setParameter(1, lockKey)
             .setParameter(2, now)
             .setParameter(3, expirationTime)
+            .setParameter(4, lockKey)
             .execute()
 
         return inserted > 0

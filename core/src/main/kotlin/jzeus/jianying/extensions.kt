@@ -16,10 +16,12 @@ fun <R> JianyingDesktop.use(block: JianyingDesktop.() -> R): R {
         this.stop()
     }
 }
-fun ClickniumService.sleep(seconds:Long):ClickniumService{
+
+fun ClickniumService.sleep(seconds: Long): ClickniumService {
     jzeus.async.sleep(seconds)
     return this
 }
+
 fun Draft.Draft.resize(size: Size) {
     this.content.canvasConfig =
         Draft.CanvasConfig(

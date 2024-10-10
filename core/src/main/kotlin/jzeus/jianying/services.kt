@@ -15,10 +15,11 @@ import jzeus.process.toProcessName
 import jzeus.str.asCommandLine
 import jzeus.task.wait
 import java.io.File
+import kotlin.concurrent.fixedRateTimer
 
 
 interface ClickniumService {
-    fun click(locator: String, index: Int? = null)
+    fun click(locator: String, index: Int? = null, timeout: Int = 30)
     fun hover(locator: String, index: Int? = null)
     fun exists(locator: String): Boolean
     fun typeText(locator: String, text: String)
@@ -60,6 +61,8 @@ interface UIElementLocators
  * @property clipWindowChangeSoundTab 剪辑窗口上的更换音色标签页
  * @property clipWindowSoundListFirst 剪辑窗口上的音色列表中的第一个元素
  * @property clipWindowAddSoundBtn 剪辑窗口上的添加音色按钮
+ * @property closeUpdateWindowBtn 用于关闭更新窗口的按钮
+ * @property closeDraftListErrorDialogBtn 用于关闭草稿列表错误对话框的按钮
  * @author dongjak
  * @created 2024/10/09
  * @version 1.0
@@ -80,6 +83,8 @@ interface JianyingDesktopUIElementLocators : UIElementLocators {
     val draftListFirstElement: String
     val draftSearchBox: String
     val draftSearchButton: String
+    val closeUpdateWindowBtn: String
+    val closeDraftListErrorDialogBtn: String
 }
 
 open class DefaultJianyingDesktopUIElementLocators : JianyingDesktopUIElementLocators {
@@ -89,6 +94,8 @@ open class DefaultJianyingDesktopUIElementLocators : JianyingDesktopUIElementLoc
     override val draftListFirstElement: String = "locator.jianyingpro.草稿列表中的第一个元素"
     override val draftSearchBox: String = "locator.jianyingpro.草稿搜索框"
     override var draftSearchButton: String = "locator.jianyingpro.草稿搜索按钮"
+    override val closeUpdateWindowBtn: String = "locator.jianyingpro.关闭版本更新窗口"
+    override val closeDraftListErrorDialogBtn: String = "locator.jianyingpro.草稿列表异常窗口上的取消按钮"
     override val clipWindowMaxBtn: String = "locator.jianyingpro.剪辑窗口最大化按钮"
     override val clipWindowDigitalHumanTab: String = ".locator/pyautogui/jianyingpro_img/1.png"
     override val clipWindowAddDigitalHumanBtn: String = ".locator/pyautogui/jianyingpro_img/generate.png"
@@ -133,8 +140,11 @@ class JianyingDesktop(
     fun start(): Boolean {
         executablePath.asCommandLine().exec()
         val res = isRunning()
-        if (res)
+        if (res) {
+            runCatching { clickniumService.click(locators.closeUpdateWindowBtn, timeout = 2) }
+            runCatching { clickniumService.click(locators.closeDraftListErrorDialogBtn, timeout = 2) }
             clickniumService.activateWindow(locators.mainWindow)
+        }
         return res
     }
 
@@ -149,8 +159,8 @@ class JianyingDesktop(
     fun stop(): Boolean {
         val res = PROCESS_NAME.pids.all {
             it.kill()
-        }
-        return res or PROCESS_NAME.pids.isEmpty()
+        } or PROCESS_NAME.pids.isEmpty()
+        return res
     }
 
     private fun raiseForNotRunning() {
