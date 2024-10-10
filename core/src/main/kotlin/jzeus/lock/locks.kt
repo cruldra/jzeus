@@ -29,6 +29,8 @@ interface DatabaseLock {
      * @param lockKey 锁的键
      */
     fun releaseLock(lockKey: String)
+
+    fun releaseAll()
 }
 
 class EBeanH2Lock(private val database: Database) : DatabaseLock {
@@ -62,6 +64,10 @@ class EBeanH2Lock(private val database: Database) : DatabaseLock {
     override fun releaseLock(lockKey: String) {
         database.sqlUpdate("DELETE FROM locks WHERE lock_key = ?")
             .setParameter(1, lockKey).execute()
+    }
+
+    override fun releaseAll() {
+        database.sqlUpdate("DELETE FROM locks").execute()
     }
 
     private fun cleanExpiredLocks() {
