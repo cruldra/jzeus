@@ -45,7 +45,7 @@ fun <R> Playwright.chromeOverCDP(cdpUrl: String, timeout: Int = 3, block: Browse
     val browser = chromium().connectOverCDP(cdpUrl, connectOverCdpOptions {
         setTimeout((timeout * 1000).toDouble())
     })
-    return block(browser)
+    return browser.use(block)
 }
 
 fun connectOverCdpOptions(block: BrowserType.ConnectOverCDPOptions.() -> Unit): BrowserType.ConnectOverCDPOptions {
@@ -102,11 +102,13 @@ fun <R> Browser.page(
     block: Page.() -> R
 ): R {
     val page = contexts().first().newPage()
-    plugins.onEach {
-        it.apply(page)
+    return page.use {
+        plugins.onEach { plugin ->
+            plugin.apply(page)
+        }
+        page.navigate(url)
+        block(page)
     }
-    page.navigate(url)
-    return block(page)
 }
 
 /**

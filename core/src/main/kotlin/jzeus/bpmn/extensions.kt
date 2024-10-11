@@ -3,6 +3,7 @@ package jzeus.bpmn
 import cn.hutool.core.util.ReflectUtil
 import jzeus.json.toJavaObject
 import org.camunda.bpm.engine.HistoryService
+import org.camunda.bpm.engine.ManagementService
 import org.camunda.bpm.engine.ProcessEngine
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.impl.bpmn.delegate.JavaDelegateInvocation
@@ -11,6 +12,7 @@ import org.camunda.bpm.engine.impl.delegate.DelegateInvocation
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.Deployment
 import org.camunda.bpm.engine.runtime.Incident
+import org.camunda.bpm.engine.runtime.Job
 import org.camunda.bpm.engine.runtime.ProcessInstance
 import org.camunda.bpm.engine.task.Task
 
@@ -122,6 +124,7 @@ fun ProcessEngine.countFinishedTask(instanceId: String?, taskId: String): Long {
         .finished()
         .count()
 }
+
 fun <R> ProcessEngine.use(block: ProcessEngine.() -> R): R {
     return block()
 }
@@ -129,3 +132,12 @@ fun <R> ProcessEngine.use(block: ProcessEngine.() -> R): R {
 //            .processInstanceId(this.camundaInstanceId)
 //.taskDefinitionKey("ScriptRewriteTask")
 //.finished()
+
+/**
+ * 查询[指定任务][taskId]当前活动中的作业
+ */
+fun ManagementService.activateJobs(taskId: String): List<Job> =
+    createJobQuery()
+        .activityId(taskId)
+        .active()
+        .list()

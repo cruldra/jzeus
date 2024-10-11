@@ -18,7 +18,7 @@ class LoggingExecutionListener : ExecutionListener {
     private val logger = LoggerFactory.getLogger(LoggingExecutionListener::class.java)
 
     override fun notify(execution: DelegateExecution) {
-        logger.info("Starting execution of service task: ${execution.currentActivityName} (ID: ${execution.currentActivityId})")
+        logger.info("开始执行任务: ${execution.currentActivityName} (ID: ${execution.currentActivityId})")
     }
 }
 

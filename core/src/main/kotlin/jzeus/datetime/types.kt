@@ -18,6 +18,8 @@ object Timeouts {
     val NEVER = Timeout(Long.MAX_VALUE)
     val ONE_SECOND = Timeout(1000)
     fun minutes(minutes: Long) = Timeout(minutes * 60 * 1000)
+    fun seconds(seconds: Long) = Timeout(seconds * 1000)
+    fun hours(hours: Long) = Timeout(hours * 60 * 60 * 1000)
 }
 
 /**
