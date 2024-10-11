@@ -2,12 +2,15 @@ package jzeus.datetime
 
 import java.time.Duration
 
-class Timeout(private val milliseconds: Long) {
+class Timeout(  val milliseconds: Long) {
 
 
     val duration: Duration
         get() = Duration.ofMillis(milliseconds)
-
+    val seconds: Long
+        get() = duration.seconds
+    val minutes: Long
+        get() = duration.toMinutes()
 
 }
 

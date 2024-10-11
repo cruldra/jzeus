@@ -2,6 +2,7 @@ package jzeus.bpmn
 
 import cn.hutool.core.util.ReflectUtil
 import jzeus.json.toJavaObject
+import org.camunda.bpm.engine.HistoryService
 import org.camunda.bpm.engine.ProcessEngine
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.impl.bpmn.delegate.JavaDelegateInvocation
@@ -9,6 +10,7 @@ import org.camunda.bpm.engine.impl.cfg.StandaloneProcessEngineConfiguration
 import org.camunda.bpm.engine.impl.delegate.DelegateInvocation
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.Deployment
+import org.camunda.bpm.engine.runtime.Incident
 import org.camunda.bpm.engine.runtime.ProcessInstance
 import org.camunda.bpm.engine.task.Task
 
@@ -102,3 +104,28 @@ fun DelegateInvocation.getVariable(name: String): Any? {
 
     return null
 }
+
+fun Incident.use(block: Incident.() -> Unit) {
+    block()
+}
+
+/**
+ * 统计[流程实例][instanceId]中已经成功执行过的[指定任务][taskId]的数量
+ * @param instanceId 流程实例ID
+ * @param taskId 任务ID
+ * @return 成功执行过的任务数量
+ */
+fun ProcessEngine.countFinishedTask(instanceId: String?, taskId: String): Long {
+    return historyService.createHistoricActivityInstanceQuery()
+        .processInstanceId(instanceId)
+        .activityId(taskId)
+        .finished()
+        .count()
+}
+fun <R> ProcessEngine.use(block: ProcessEngine.() -> R): R {
+    return block()
+}
+//        val query = camundaEngine.historyService.createHistoricTaskInstanceQuery()
+//            .processInstanceId(this.camundaInstanceId)
+//.taskDefinitionKey("ScriptRewriteTask")
+//.finished()

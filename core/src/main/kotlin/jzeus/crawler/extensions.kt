@@ -52,22 +52,31 @@ fun connectOverCdpOptions(block: BrowserType.ConnectOverCDPOptions.() -> Unit): 
     return BrowserType.ConnectOverCDPOptions().apply(block)
 }
 
-fun waitForSelectorOptions(block: Page.WaitForSelectorOptions.() -> Unit): Page.WaitForSelectorOptions {
+fun pageWaitForSelectorOptions(block: Page.WaitForSelectorOptions.() -> Unit): Page.WaitForSelectorOptions {
     return Page.WaitForSelectorOptions().apply(block)
 }
 
-fun Page.WaitForSelectorOptions.timeoutOfSeconds(seconds: Int): Page.WaitForSelectorOptions {
-    return setTimeout(seconds*1000.toDouble())
+fun elementWaitForSelectorOptions(block: ElementHandle.WaitForSelectorOptions.() -> Unit): ElementHandle.WaitForSelectorOptions {
+    return ElementHandle.WaitForSelectorOptions().apply(block)
 }
+
+
+fun Page.WaitForSelectorOptions.timeoutOfSeconds(seconds: Int): Page.WaitForSelectorOptions {
+    return setTimeout(seconds * 1000.toDouble())
+}
+
 fun Page.waitForURLOptions(block: Page.WaitForURLOptions.() -> Unit): Page.WaitForURLOptions {
     return Page.WaitForURLOptions().apply(block)
 }
+
 fun Page.WaitForURLOptions.timeoutOfSeconds(seconds: Int): Page.WaitForURLOptions {
     return setTimeout(seconds * 1000.toDouble())
 }
+
 fun Page.WaitForURLOptions.timeoutOfMinutes(minutes: Int): Page.WaitForURLOptions {
     return setTimeout(minutes * 60 * 1000.toDouble())
 }
+
 /**
  * 打开新页面
  *
@@ -150,3 +159,14 @@ val ElementHandle.parent: ElementHandle
     get() = this.evaluateHandle("(element) => element.parentElement") as ElementHandle
 val ElementHandle.outerHTML: String
     get() = this.evaluate("(element) => element.outerHTML") as String
+
+fun ElementHandle.sleep(seconds: Int): ElementHandle {
+    jzeus.async.sleep(seconds.toLong())
+    return this
+}
+/*
+fun ElementHandle.clickCenter(){
+    val box = this.boundingBox()
+    //mouse().click(box.x + box.width / 2, box.y + box.height / 2)//在视频卡片中间点击进入视频详情页
+}
+*/

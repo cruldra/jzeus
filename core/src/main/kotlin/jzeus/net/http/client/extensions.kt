@@ -5,6 +5,7 @@ import com.moczul.ok2curl.logger.Logger
 import jzeus.failure.failure
 import jzeus.json.objectMapper
 import jzeus.log.LoggerDelegate
+import jzeus.net.http.client.retrofit2.FileConverterFactory
 import jzeus.net.http.client.retrofit2.RawStringConverterFactory
 import jzeus.os.getSystemProxy
 import okhttp3.*
@@ -65,6 +66,7 @@ fun Retrofit.Builder.addConverterFactoryBefore(
 fun retrofit(block: Retrofit.Builder.() -> Unit = {}): Retrofit = Retrofit.Builder().apply {
     client(createHttpClient())
     addConverterFactory(RawStringConverterFactory())
+    addConverterFactory(FileConverterFactory())
     addConverterFactory(JacksonConverterFactory.create(objectMapper))
 }.apply(block).build()
 
