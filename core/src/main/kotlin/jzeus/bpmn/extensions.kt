@@ -2,10 +2,10 @@ package jzeus.bpmn
 
 import cn.hutool.core.util.ReflectUtil
 import jzeus.json.toJavaObject
-import org.camunda.bpm.engine.HistoryService
 import org.camunda.bpm.engine.ManagementService
 import org.camunda.bpm.engine.ProcessEngine
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.camunda.bpm.engine.history.HistoricActivityInstance
 import org.camunda.bpm.engine.impl.bpmn.delegate.JavaDelegateInvocation
 import org.camunda.bpm.engine.impl.cfg.StandaloneProcessEngineConfiguration
 import org.camunda.bpm.engine.impl.delegate.DelegateInvocation
@@ -107,8 +107,8 @@ fun DelegateInvocation.getVariable(name: String): Any? {
     return null
 }
 
-fun Incident.use(block: Incident.() -> Unit) {
-    block()
+fun <R> Incident.use(block: Incident.() -> R): R {
+    return block()
 }
 
 /**
@@ -141,3 +141,46 @@ fun ManagementService.activateJobs(taskId: String): List<Job> =
         .activityId(taskId)
         .active()
         .list()
+
+
+/**
+ * 获取[流程][instanceId]最近一次成功执行过的任意任务
+ * @param instanceId 流程实例ID
+ * @return 最近一次成功执行过的任务
+ */
+fun ProcessEngine.recentlyRecentFinishedActivityInstances(instanceId: String): HistoricActivityInstance? {
+    return historyService.createHistoricActivityInstanceQuery()
+        .processInstanceId(instanceId)
+        .finished()
+        .orderByHistoricActivityInstanceEndTime().desc()
+        .list().firstOrNull()
+}
+
+/**
+ * 获取[流程][instanceId]最近一次出现的错误
+ * @param instanceId 流程实例ID
+ * @return 最近一次出现的错误
+ */
+fun ProcessEngine.recentlyErrorIncident(instanceId: String): Incident? {
+    return runtimeService.createIncidentQuery()
+        .processInstanceId(instanceId)
+        .orderByIncidentTimestamp().desc()
+        .incidentType("failedJob")
+        .list().firstOrNull()
+}
+
+
+/**
+ * 获取[流程实例][instanceId]当前正在等待执行的活动
+ * @param instanceId 流程实例ID
+ * @return 正在等待执行的活动
+ */
+fun ProcessEngine.getWaitingActivities(instanceId: String): List<WaitingActivity> {
+
+    return runtimeService.getActiveActivityIds(instanceId)
+        .groupingBy { it }
+        .eachCount()
+        .map { (activityId, count) ->
+            WaitingActivity(activityId, count)
+        }
+}

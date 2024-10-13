@@ -24,11 +24,13 @@ val Port.progress: List<ProcessHandle>
         val port = this.value
         val processes = mutableListOf<ProcessHandle>()
         val command = when {
-            System.getProperty("os.name").lowercase(Locale.getDefault()).contains("win") ->
-                arrayOf("cmd", "/c", "netstat -ano | findstr :$port")
+            System.getProperty("os.name").lowercase(Locale.getDefault()).contains("win") -> arrayOf(
+                "cmd",
+                "/c",
+                "netstat -ano | findstr :$port"
+            )
 
-            else ->
-                arrayOf("sh", "-c", "lsof -i :$port")
+            else -> arrayOf("sh", "-c", "lsof -i :$port")
         }
 
         val process = Runtime.getRuntime().exec(command)
@@ -57,15 +59,20 @@ val Port.progress: List<ProcessHandle>
 val ProcessName.pids: List<PID>
     get() {
         val cliOutput =
-            """ powershell -Command "& {Get-Process | Where-Object { ${"$"}_.Name -like '*JianyingPro*' } | Select-Object Id,Name | ConvertTo-Json}" """
-                .asCommandLine()
-                .exec()
+            """ powershell -Command "& {@(Get-Process | Where-Object { ${"$"}_.Name -like '*JianyingPro*' } | Select-Object Id,Name) | ConvertTo-Json }" """//-AsArray } ps7才支持
+                .asCommandLine().exec()
         return if (cliOutput.isNotBlank() && cliOutput.isJson()) {
-            val pids = objectMapper.readTree(cliOutput) as ArrayNode
 
-            pids.map {
-                PID(it.get("Id").asLong())
+            if (cliOutput.trim().startsWith("{")) {
+                val pid = objectMapper.readTree(cliOutput)
+                listOf(PID(pid.get("Id").asLong()))
+            } else {
+                val pids = objectMapper.readTree(cliOutput) as ArrayNode
+                pids.map {
+                    PID(it.get("Id").asLong())
+                }
             }
+
         } else emptyList()
 
     }

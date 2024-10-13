@@ -1,18 +1,14 @@
 package jzeus.bpmn
 
-import org.camunda.bpm.engine.delegate.DelegateTask
-import org.camunda.bpm.engine.delegate.TaskListener
-import org.camunda.bpm.engine.impl.bpmn.parser.BpmnParse.CAMUNDA_BPMN_EXTENSIONS_NS
-import org.slf4j.LoggerFactory
-
-
-import org.camunda.bpm.engine.impl.bpmn.parser.AbstractBpmnParseListener
-import org.camunda.bpm.engine.impl.pvm.process.ActivityImpl
-import org.camunda.bpm.engine.impl.pvm.process.ScopeImpl
-import org.camunda.bpm.engine.impl.util.xml.Element
 
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.ExecutionListener
+import org.camunda.bpm.engine.impl.bpmn.parser.AbstractBpmnParseListener
+import org.camunda.bpm.engine.impl.bpmn.parser.BpmnParse.CAMUNDA_BPMN_EXTENSIONS_NS
+import org.camunda.bpm.engine.impl.pvm.process.ActivityImpl
+import org.camunda.bpm.engine.impl.pvm.process.ScopeImpl
+import org.camunda.bpm.engine.impl.util.xml.Element
+import org.slf4j.LoggerFactory
 
 class LoggingExecutionListener : ExecutionListener {
     private val logger = LoggerFactory.getLogger(LoggingExecutionListener::class.java)

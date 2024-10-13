@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
 import jzeus.any.Range
+import jzeus.enum.toMap
 import java.io.IOException
 import java.time.Duration
 import java.util.*
@@ -59,6 +60,7 @@ class KebabCaseEnumSerializer :
         gen.writeString(value.name.lowercase(Locale.getDefault()).replace("_", "-"))
     }
 }
+
 /**
  * 序列化枚举为小写字符串
  *
@@ -91,5 +93,16 @@ class RangeSerializer : JsonSerializer<Range<*>>() {
         gen.writeString(src.min.toString())
         gen.writeString(src.max.toString())
         gen.writeEndArray()
+    }
+}
+
+class EnumSerializer : JsonSerializer<Enum<*>>() {
+    @Throws(IOException::class)
+    override fun serialize(
+        src: Enum<*>,
+        gen: JsonGenerator,
+        serializers: SerializerProvider
+    ) {
+        gen.writeObject(src.toMap())
     }
 }
