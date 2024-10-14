@@ -2,7 +2,6 @@ package jzeus.db
 
 import io.ebean.DB
 import io.ebean.PagedList
-import java.util.concurrent.Future
 
 fun <T : BaseModel> T.save(): T {
     DB.save(this)
