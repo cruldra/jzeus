@@ -14,6 +14,7 @@ import org.camunda.bpm.engine.repository.Deployment
 import org.camunda.bpm.engine.runtime.Incident
 import org.camunda.bpm.engine.runtime.Job
 import org.camunda.bpm.engine.runtime.ProcessInstance
+import org.camunda.bpm.engine.runtime.ProcessInstantiationBuilder
 import org.camunda.bpm.engine.task.Task
 
 fun camunda(block: StandaloneProcessEngineConfiguration.() -> Unit): ProcessEngine =
@@ -107,6 +108,16 @@ fun DelegateInvocation.getVariable(name: String): Any? {
     return null
 }
 
+val DelegateInvocation.activityId: String?
+    get() {
+        if (this is JavaDelegateInvocation) {
+            val execution = ReflectUtil.getFieldValue(this, "execution") as ExecutionEntity
+            return execution.activityId
+        }
+
+        return null
+    }
+
 fun <R> Incident.use(block: Incident.() -> R): R {
     return block()
 }
@@ -183,4 +194,33 @@ fun ProcessEngine.getWaitingActivities(instanceId: String): List<WaitingActivity
         .map { (activityId, count) ->
             WaitingActivity(activityId, count)
         }
+}
+
+fun ProcessEngine.getInstances(processDefinitionKey: String): List<ProcessInstance> {
+    return runtimeService.createProcessInstanceQuery()
+        .processDefinitionKey(processDefinitionKey)
+        .list()
+}
+
+/**
+ * 创建流程实例
+ *
+ * ## 示例: 创建流程并从指定的步骤开始执行
+ * ```kotlin
+ * camundaEngine.use{
+ *
+ *  createProcessInstance("sample-process"){
+ *    .startBeforeActivity("activityId")
+ *  }
+ * }
+ * ```
+ *
+ * @param processDefinitionKey 流程定义的key
+ * @param block 流程实例构建器
+ */
+fun ProcessEngine.createProcessInstance(
+    processDefinitionKey: String,
+    block: ProcessInstantiationBuilder.() -> Unit
+): ProcessInstance {
+    return runtimeService.createProcessInstanceByKey(processDefinitionKey).apply(block).execute()
 }
