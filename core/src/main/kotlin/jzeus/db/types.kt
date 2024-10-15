@@ -1,5 +1,7 @@
 package jzeus.db
 
+interface BaseModel
+
 
 data class DataPage<T>(
     val pageNo: Int,
