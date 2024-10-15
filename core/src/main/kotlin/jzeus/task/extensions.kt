@@ -127,3 +127,14 @@ fun stopwatch(timeUnit: TemporalUnit = ChronoUnit.MILLIS, procedure: () -> Unit)
         }
     }
 }
+
+/**
+ * 在[timeout]后执行[task]
+ */
+fun setTimeout(timeout: Timeout, task: () -> Unit) {
+    val executor = Executors.newSingleThreadScheduledExecutor()
+    executor.schedule({
+        task()
+        executor.shutdown()
+    }, timeout.duration.seconds, TimeUnit.SECONDS)
+}

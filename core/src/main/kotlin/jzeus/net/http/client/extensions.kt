@@ -43,8 +43,8 @@ fun OkHttpClient.Builder.addInterceptorBefore(
 
 fun createHttpClient(block: OkHttpClient.Builder.() -> Unit = {}) = OkHttpClient.Builder().apply {
     val log by LoggerDelegate()
-    callTimeout(Duration.ofMinutes(1))
-    readTimeout(Duration.ofMinutes(5))
+    callTimeout(Duration.ofMinutes(10))
+    readTimeout(Duration.ofMinutes(10))
     connectTimeout(Duration.ofSeconds(30))
     addInterceptor(CurlInterceptor(object : Logger {
         override fun log(message: String) {
