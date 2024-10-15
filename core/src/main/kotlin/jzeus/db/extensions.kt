@@ -26,7 +26,10 @@ fun <T : BaseModel> Collection<T>.saveAll(): Collection<T> {
     DB.saveAll(this)
     return this
 }
-
+fun <T : BaseModel> Collection<T>.updateAll(): Collection<T> {
+    DB.updateAll(this)
+    return this
+}
 fun <T, R> PagedList<T>.map(mapper: (T) -> R): PagedList<R> {
     return object : PagedList<R> {
         override fun loadCount() = this@map.loadCount()

@@ -224,3 +224,17 @@ fun ProcessEngine.createProcessInstance(
 ): ProcessInstance {
     return runtimeService.createProcessInstanceByKey(processDefinitionKey).apply(block).execute()
 }
+
+fun ProcessEngine.findInstancesByBusinessKey(businessKey: String): List<ProcessInstance> {
+    return runtimeService.createProcessInstanceQuery()
+        .processInstanceBusinessKey(businessKey)
+        .list()
+}
+
+fun ProcessEngine.deleteInstanceByBusinessKey(businessKey: String, reason: String = "delete by business key") {
+    findInstancesByBusinessKey(businessKey)
+        .forEach {
+            runtimeService.deleteProcessInstance(it.id, "delete by business key")
+        }
+
+}
