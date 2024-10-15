@@ -33,6 +33,59 @@ interface DatabaseLock {
     fun releaseAll()
 }
 
+class EBeanMySQLLock(private val database: Database) : DatabaseLock {
+    init {
+        database
+            .sqlUpdate("""
+                CREATE TABLE IF NOT EXISTS locks (
+                    lock_key VARCHAR(255) PRIMARY KEY,
+                    locked_at TIMESTAMP,
+                    expires_at TIMESTAMP
+                )
+            """)
+            .execute()
+    }
+
+    override fun acquireLock(lockKey: String, timeout: Timeout): Boolean {
+        cleanExpiredLocks()
+
+        val now = LocalDateTime.now()
+        val expirationTime = now.plusTimeout(timeout)
+
+        val inserted = database.sqlUpdate("""
+            INSERT INTO locks (lock_key, locked_at, expires_at)
+            VALUES (:lockKey, :lockedAt, :expiresAt)
+            ON DUPLICATE KEY UPDATE
+                lock_key = IF(expires_at < VALUES(expires_at), VALUES(lock_key), lock_key),
+                locked_at = IF(expires_at < VALUES(expires_at), VALUES(locked_at), locked_at),
+                expires_at = IF(expires_at < VALUES(expires_at), VALUES(expires_at), expires_at)
+        """)
+            .setParameter("lockKey", lockKey)
+            .setParameter("lockedAt", now)
+            .setParameter("expiresAt", expirationTime)
+            .execute()
+
+        return inserted > 0
+    }
+
+    override fun releaseLock(lockKey: String) {
+        database.sqlUpdate("DELETE FROM locks WHERE lock_key = :lockKey")
+            .setParameter("lockKey", lockKey)
+            .execute()
+    }
+
+    override fun releaseAll() {
+        database.sqlUpdate("DELETE FROM locks").execute()
+    }
+
+    private fun cleanExpiredLocks() {
+        database.sqlUpdate("DELETE FROM locks WHERE expires_at < :now")
+            .setParameter("now", LocalDateTime.now())
+            .execute()
+    }
+}
+
+
 class EBeanH2Lock(private val database: Database) : DatabaseLock {
     init {
         database
