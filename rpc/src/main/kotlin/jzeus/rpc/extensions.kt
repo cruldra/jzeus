@@ -2,8 +2,8 @@ package jzeus.rpc
 
 import com.googlecode.jsonrpc4j.JsonRpcHttpClient
 import com.googlecode.jsonrpc4j.ProxyUtil
+import jzeus.datetime.Timeouts
 import java.net.URI
-import java.net.URL
 
 
 fun <T, R> rpc(clazz: Class<T>, block: T.() -> R): R {
@@ -11,6 +11,7 @@ fun <T, R> rpc(clazz: Class<T>, block: T.() -> R): R {
     val client = JsonRpcHttpClient(
         URI("http://localhost:8080").toURL()
     )
+    client.readTimeoutMillis = Timeouts.hours(24).milliseconds.toInt()
 
     // 创建服务代理
     val service = ProxyUtil.createClientProxy(
