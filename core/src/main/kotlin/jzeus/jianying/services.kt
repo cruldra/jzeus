@@ -19,20 +19,78 @@ import kotlin.concurrent.fixedRateTimer
 
 
 interface ClickniumService {
+
+    /**
+     * 点击元素
+     *
+     * @param locator 定位器
+     * @param index 元素索引
+     * @param timeout 超时时间,单位为`秒`,默认为`30`秒
+     */
     fun click(locator: String, index: Int? = null, timeout: Int = 30)
-    fun hover(locator: String, index: Int? = null)
-    fun exists(locator: String): Boolean
-    fun typeText(locator: String, text: String)
+
+
+    /**
+     * 将鼠标悬停在元素上
+     * @param locator 定位器
+     * @param index 元素索引
+     * @param timeout 超时时间,单位为`秒`,默认为`30`秒
+     */
+    fun hover(locator: String, index: Int? = null, timeout: Int = 30)
+
+
+    /**
+     * 判断元素是否存在
+     * @param locator 定位器
+     * @param timeout 超时时间,单位为`秒`,默认为`30`秒
+     * @return 是否存在
+     */
+    fun exists(locator: String, timeout: Int = 30): Boolean
+
+
+    /**
+     * 输入文本
+     * @param locator 定位器
+     * @param text 文本
+     * @param timeout 超时时间,单位为`秒`,默认为`30`秒
+     */
+    fun typeText(locator: String, text: String, timeout: Int = 30)
+
+
+    /**
+     * 设置`clicknium`的授权码
+     * @param license   授权码
+     */
     fun setLicense(license: String)
+
+
+    /**
+     * 按下键盘按键
+     * @param key 按键
+     */
     fun keyDown(key: String)
+
+
+    /**
+     * 释放键盘按键
+     * @param key 按键
+     */
     fun keyUp(key: String)
 
     /**
      * 激活窗口,[定位器][locator]必须是一个窗口
      * @param locator 定位器
      */
-    fun activateWindow(locator: String)
-    fun windowMaximize(locator: String, maxBtnLocator: String)
+    fun activateWindow(locator: String, timeout: Int = 30)
+
+
+    /**
+     * 窗口最大化
+     * @param locator 定位器
+     * @param maxBtnLocator 最大化按钮定位器
+     * @param timeout 超时时间,单位为`秒`,默认为`30`秒
+     */
+    fun windowMaximize(locator: String, maxBtnLocator: String, timeout: Int = 30)
 
     /**
      * 点击屏幕上的图片
@@ -119,7 +177,8 @@ open class DefaultJianyingDesktopUIElementLocators : JianyingDesktopUIElementLoc
 class JianyingDesktop(
     private val executablePath: String,
     private val clickniumService: ClickniumService,
-    private val locators: JianyingDesktopUIElementLocators = DefaultJianyingDesktopUIElementLocators()
+    private val locators: JianyingDesktopUIElementLocators = DefaultJianyingDesktopUIElementLocators(),
+    private val defaultTimeout: Timeout = Timeouts.minutes(1)
 ) {
     private val log by LoggerDelegate()
 
