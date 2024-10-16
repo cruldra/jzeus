@@ -108,6 +108,10 @@ fun Draft.Draft.addTextTrack(text: String, maxLengthPerSegment: Int = 500): Draf
     return this
 }
 
+fun Draft.Draft.delete(rootDir: File): Boolean {
+    val draftDir = rootDir.subFile(this.name)
+    return draftDir.deleteRecursively()
+}
 
 fun Draft.Draft.save(rootDir: File): Draft.Draft {
     val draftDir = rootDir.subFile(this.name)
