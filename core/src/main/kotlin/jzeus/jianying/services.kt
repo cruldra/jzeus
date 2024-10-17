@@ -202,7 +202,7 @@ class JianyingDesktop(
         if (res) {
             runCatching { clickniumService.click(locators.closeUpdateWindowBtn, timeout = 2) }
             runCatching { clickniumService.click(locators.closeDraftListErrorDialogBtn, timeout = 2) }
-            clickniumService.activateWindow(locators.mainWindow)
+            clickniumService.activateWindow(locators.mainWindow, timeout =180 )
         }
         return res
     }
