@@ -1,9 +1,7 @@
 package jzeus.net
 
-import jzeus.any.print
 import jzeus.os.exec
 import jzeus.str.asCommandLine
-import okhttp3.internal.platform.Platform
 import java.io.IOException
 import java.net.*
 
@@ -62,12 +60,4 @@ fun URL.getQueryParameter(name: String): String? {
         }
     }
     return null
-}
-
-fun main() {
-//    print(isPortAvailable(3128))
-//    print(getSystemProxy("https://api.heygen.com/".toURI()))
-    //print(System.getProperty("http.proxyHost"))
-    //print("reg query \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\" /v ProxyEnable /v ProxyServer".asCommandLine().exec())
-"""(Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings").ProxyServer""".asCommandLine().exec().print()
 }

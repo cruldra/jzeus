@@ -238,3 +238,34 @@ fun ProcessEngine.deleteInstanceByBusinessKey(businessKey: String, reason: Strin
         }
 
 }
+
+fun ProcessEngine.findInstanceById(instanceId: String): ProcessInstance? {
+    return runtimeService.createProcessInstanceQuery()
+        .processInstanceId(instanceId)
+        .singleResult()
+}
+
+
+/**
+ * 查找所有活动中的用户任务
+ * @param taskDefinitionKey 任务定义的key
+ * @return 所有活动中的用户任务
+ */
+fun ProcessEngine.findActivatedUserTasks(taskDefinitionKey: String): List<Task> {
+    return taskService.createTaskQuery()
+        .taskDefinitionKey(taskDefinitionKey)
+        .active()
+        .list()
+}
+
+
+/**
+ * 根据[任务ID][taskId]查找指定的任务
+ * @param taskId 任务ID
+ * @return 指定的任务
+ */
+fun ProcessEngine.findUserTaskById(taskId: String): Task? {
+    return taskService.createTaskQuery()
+        .taskId(taskId)
+        .singleResult()
+}

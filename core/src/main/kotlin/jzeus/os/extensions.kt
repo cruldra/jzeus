@@ -1,6 +1,5 @@
 package jzeus.os
 
-import jzeus.any.print
 import jzeus.any.truthValue
 import jzeus.datetime.Timeout
 import jzeus.datetime.Timeouts
@@ -33,32 +32,6 @@ fun CommandLine.exec(workDir: File? = null, timeout: Timeout = Timeouts.NEVER): 
     executor.streamHandler = streamHandler
     executor.execute(this)
     return logHandler.lines.toString()
-}
-
-fun main() {
-    //print("powershell -Command echo hello".asCommandLine().exec())
-    /* val proxyCommand = """
-         powershell -Command '(Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings").ProxyServer'
-     """.trimIndent()
-     println(proxyCommand.asCommandLine().exec())*/
-//    """powershell -Command "Write-Output ((Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings').ProxyServer)"""".asCommandLine()
-//        .exec().print()
-//    """powershell -Command "Write-Output ((Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings').ProxyEnable)"""".asCommandLine()
-//        .exec().truthValue().print()
-//    """powershell -ScriptBlock {(Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings").ProxyServer}""".asCommandLine().exec().print()
-//    """powershell -Command "(Get-ItemProperty -Path \"HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\").ProxyServer"""".asCommandLine()
-//        .exec().print()
-//OS.isFamilyWindows()
-//    System.getProperty("os.name").print()
-//    System.getProperty("os.version").print()
-//
-//    print(getSystemProxy())
-    """ powershell -Command "& {Get-Process | Where-Object { ${"$"}_.Name -like '*JianyingPro*' } | Select-Object Id,Name | ConvertTo-Json}" """
-        .asCommandLine()
-        .exec()
-        .print()
-
-
 }
 
 fun getSystemProxy(): Proxies? {

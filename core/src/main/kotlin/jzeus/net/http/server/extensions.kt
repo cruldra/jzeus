@@ -15,6 +15,10 @@ fun Context.resultString(result: String) {
     contentType("text/plain; charset=utf-8")
 }
 
+fun Context.resultBool(result: Boolean) {
+    resultString(result.toString())
+}
+
 fun Context.resultJson(data: Any) {
     json(data)
 }

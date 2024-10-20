@@ -1,6 +1,5 @@
 package jzeus.uuid
 
-import jzeus.any.print
 import java.util.*
 
 

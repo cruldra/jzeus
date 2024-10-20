@@ -22,12 +22,6 @@ fun <T> T.truthValue(): Boolean {
     }
 }
 
-
-fun <T> T.print() {
-    println(this)
-}
-
-
 fun <T> T.raiseForNull(message: String): Any? {
     if (this == null) failure<Any>(message)
     return this

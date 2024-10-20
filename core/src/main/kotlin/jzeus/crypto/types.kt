@@ -1,6 +1,5 @@
 package jzeus.crypto
 
-import jzeus.any.print
 import java.security.SecureRandom
 import java.util.*
 import javax.crypto.Cipher
@@ -73,11 +72,4 @@ object SecretKeyGenerator {
 
         return builder.toString()
     }
-}
-
-fun main() {
-//    print("abc111".encryptAES("GgH7yHMPj3c2oyx"))
-//    print("N7A0Vc7ST8Ku4emLtpKKxiiV6bYq5EAUAGwCt41YhFA=".decryptAES("GgH7yHMPj3c2oyx"))
-
-    SecretKeyGenerator.generateKey().print()
 }
