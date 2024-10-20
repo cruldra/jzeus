@@ -102,14 +102,39 @@ fun <R> Browser.page(
     block: Page.() -> R
 ): R {
     val page = contexts().first().newPage()
+    val preventCdpCheckScript = """ (() => {
+            const originalError = Error;
+            function CustomError(...args) {
+                const error = new originalError(...args);
+                Object.defineProperty(error, 'stack', {
+                    get: () => '',
+                    configurable: false
+                });
+                return error;
+            }
+            CustomError.prototype = originalError.prototype;
+            window.Error = CustomError;
+
+            const observer = new MutationObserver(() => {
+                if (window.Error !== CustomError) {
+                    window.Error = CustomError;
+                }
+            });
+            observer.observe(document, { childList: true, subtree: true });
+        })();"""
     return page.use {
         plugins.onEach { plugin ->
             plugin.apply(page)
+        }
+        page.evaluate(preventCdpCheckScript)
+        page.onLoad {
+            it.evaluate(preventCdpCheckScript)
         }
         page.navigate(url)
         block(page)
     }
 }
+
 
 /**
  * 滚动到页面底部
@@ -166,9 +191,11 @@ fun ElementHandle.sleep(seconds: Int): ElementHandle {
     jzeus.async.sleep(seconds.toLong())
     return this
 }
-/*
-fun ElementHandle.clickCenter(){
-    val box = this.boundingBox()
-    //mouse().click(box.x + box.width / 2, box.y + box.height / 2)//在视频卡片中间点击进入视频详情页
+
+fun waitForSelectorOptions(block: Page.WaitForSelectorOptions.() -> Unit): Page.WaitForSelectorOptions {
+    return Page.WaitForSelectorOptions().apply(block)
 }
-*/
+
+fun hoverOptions(block: ElementHandle.HoverOptions.() -> Unit): ElementHandle.HoverOptions {
+    return ElementHandle.HoverOptions().apply(block)
+}
