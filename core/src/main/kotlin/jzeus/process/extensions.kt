@@ -59,7 +59,7 @@ val Port.progress: List<ProcessHandle>
 val ProcessName.pids: List<PID>
     get() {
         val cliOutput =
-            """ powershell -Command "& {@(Get-Process | Where-Object { ${"$"}_.Name -like '*JianyingPro*' } | Select-Object Id,Name) | ConvertTo-Json }" """//-AsArray } ps7才支持
+            """ powershell -Command "& {@(Get-Process | Where-Object { ${"$"}_.Name -like '*${this.value}*' } | Select-Object Id,Name) | ConvertTo-Json }" """//-AsArray } ps7才支持
                 .asCommandLine().exec()
         return if (cliOutput.isNotBlank() && cliOutput.isJson()) {
 
