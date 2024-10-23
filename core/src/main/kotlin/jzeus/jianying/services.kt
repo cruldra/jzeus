@@ -1,5 +1,6 @@
 package jzeus.jianying
 
+import jzeus.console.printToConsole
 import jzeus.datetime.Timeout
 import jzeus.datetime.Timeouts
 import jzeus.failure.failure
@@ -7,13 +8,18 @@ import jzeus.file.raiseForNotExists
 import jzeus.file.siblingFile
 import jzeus.file.subFile
 import jzeus.json.objectMapper
+import jzeus.list.raiseForEmpty
+import jzeus.list.raiseForSizeLessThan
 import jzeus.log.LoggerDelegate
 import jzeus.os.exec
 import jzeus.process.kill
 import jzeus.process.pids
 import jzeus.process.toProcessName
 import jzeus.str.asCommandLine
+import jzeus.task.retry
 import jzeus.task.wait
+import jzeus.win32.WindowState
+import jzeus.win32.setWindowState
 import java.io.File
 import kotlin.concurrent.fixedRateTimer
 
@@ -81,6 +87,9 @@ interface ClickniumService {
      * 激活窗口,[定位器][locator]必须是一个窗口
      * @param locator 定位器
      */
+    @Deprecated(
+        "不太稳定,用jzeus.win32.ExtensionsKt.setWindowState代替"
+    )
     fun activateWindow(locator: String, timeout: Int = 30)
 
 
@@ -183,7 +192,7 @@ class JianyingDesktop(
     private val log by LoggerDelegate()
 
     companion object {
-        private val PROCESS_NAME = "JianyingPro.exe".toProcessName()
+        private val PROCESS_NAME = "JianyingPro".toProcessName()
     }
 
     private var draft: Draft.Draft? = null
@@ -200,15 +209,21 @@ class JianyingDesktop(
         executablePath.asCommandLine().exec()
         val res = isRunning()
         if (res) {
+            PROCESS_NAME.pids.printToConsole("${PROCESS_NAME.value}的进程ID为:")
+            setWindowState(PROCESS_NAME.value, WindowState.SHOW)
             runCatching { clickniumService.click(locators.closeUpdateWindowBtn, timeout = 2) }
             runCatching { clickniumService.click(locators.closeDraftListErrorDialogBtn, timeout = 2) }
-            clickniumService.activateWindow(locators.mainWindow, timeout =180 )
         }
         return res
     }
 
     private fun isRunning(): Boolean {
-        return PROCESS_NAME.pids.isNotEmpty()
+
+        return retry(15, 2) {
+            val pids = PROCESS_NAME.pids
+            pids.raiseForSizeLessThan(4, "剪映未完全启动")
+            pids.size >= 4
+        } ?: false
     }
 
     /**

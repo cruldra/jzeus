@@ -1,5 +1,7 @@
 package jzeus.list
 
+import jzeus.failure.failure
+
 /**
  * 获取列表的前`n`个元素,如果`n`大于列表长度,则返回整个列表
  */
@@ -67,6 +69,14 @@ fun <E> List<E>.add(element: E): Boolean {
 fun <E> Collection<E>?.raiseForEmpty(message: String): Collection<E> {
     if (this.isNullOrEmpty()) {
         throw NoSuchElementException(message)
+    }
+    return this
+}
+
+fun <E> Collection<E>.raiseForSizeLessThan(size: Int, message: String): Collection<E> {
+    this.raiseForEmpty(message)
+    if (this.size < size) {
+        failure<Any>(message)
     }
     return this
 }
