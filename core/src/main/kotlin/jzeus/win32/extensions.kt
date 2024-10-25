@@ -7,7 +7,7 @@ import jzeus.os.exec
 import jzeus.str.asCommandLine
 
 fun setWindowState(processName: String, state: WindowState) {
-    """powershell -File "${
+    """powershell -ExecutionPolicy Bypass -File "${
         ClassPathResource("win32/setWindowState.ps1").stream.writeToTempFile(
             "setWindowState",
             ".ps1"

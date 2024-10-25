@@ -4,7 +4,6 @@ import cn.hutool.core.thread.ThreadFactoryBuilder
 import jzeus.async.sleep
 import jzeus.cls.isSub
 import jzeus.datetime.Timeout
-import jzeus.failure.failure
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit

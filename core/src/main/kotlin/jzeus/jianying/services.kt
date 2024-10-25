@@ -6,9 +6,7 @@ import jzeus.datetime.Timeouts
 import jzeus.failure.failure
 import jzeus.file.raiseForNotExists
 import jzeus.file.siblingFile
-import jzeus.file.subFile
 import jzeus.json.objectMapper
-import jzeus.list.raiseForEmpty
 import jzeus.list.raiseForSizeLessThan
 import jzeus.log.LoggerDelegate
 import jzeus.os.exec
@@ -21,7 +19,6 @@ import jzeus.task.wait
 import jzeus.win32.WindowState
 import jzeus.win32.setWindowState
 import java.io.File
-import kotlin.concurrent.fixedRateTimer
 
 
 interface ClickniumService {
@@ -209,7 +206,7 @@ class JianyingDesktop(
         executablePath.asCommandLine().exec()
         val res = isRunning()
         if (res) {
-            PROCESS_NAME.pids.printToConsole("${PROCESS_NAME.value}的进程ID为:")
+            //clickniumService.activateWindow(locators.mainWindow, timeout =180 )
             setWindowState(PROCESS_NAME.value, WindowState.SHOW)
             runCatching { clickniumService.click(locators.closeUpdateWindowBtn, timeout = 2) }
             runCatching { clickniumService.click(locators.closeDraftListErrorDialogBtn, timeout = 2) }

@@ -1,7 +1,7 @@
 package jzeus.os
 
 import jzeus.str.asCommandLine
-import java.util.UUID
+import java.util.*
 
 enum class OSVersion(val value: String) {
     WIN11("Windows 11")

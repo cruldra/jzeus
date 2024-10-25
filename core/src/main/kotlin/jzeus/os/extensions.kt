@@ -3,6 +3,7 @@ package jzeus.os
 import jzeus.any.truthValue
 import jzeus.datetime.Timeout
 import jzeus.datetime.Timeouts
+import jzeus.failure.failure
 import jzeus.net.Proxies
 import jzeus.str.asCommandLine
 import org.apache.commons.exec.*
@@ -30,8 +31,10 @@ fun CommandLine.exec(workDir: File? = null, timeout: Timeout = Timeouts.NEVER): 
     val logHandler = ExecLogHandler()
     val streamHandler = PumpStreamHandler(logHandler)
     executor.streamHandler = streamHandler
-    executor.execute(this)
-    return logHandler.lines.toString()
+    val retCode = executor.execute(this)
+    return if (retCode == 0)
+        logHandler.lines.toString()
+    else failure("命令执行失败,退出码为:${retCode},错误详情:${logHandler.lines}")
 }
 
 fun getSystemProxy(): Proxies? {
