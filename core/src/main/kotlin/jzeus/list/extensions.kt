@@ -80,3 +80,18 @@ fun <E> Collection<E>.raiseForSizeLessThan(size: Int, message: String): Collecti
     }
     return this
 }
+/**
+ * 使用[选择器][selector]选择此可迭代集合的每一项的中的指定值并执行**sum**统计
+ * @param selector 选择器,必须返回一个[Long]
+ * @return Long
+ */
+inline fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long {
+    var sum = 0L
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+
+

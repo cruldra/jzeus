@@ -1,6 +1,7 @@
 package jzeus.datetime
 
 import java.text.SimpleDateFormat
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -50,3 +51,4 @@ val LocalDateTime.timestamp: Long
 fun LocalDateTime.formatPopular(format: PopularDatetimeFormat): String {
     return this.format(format.dateTimeFormatter)
 }
+fun Duration.gt(other: Duration) = this.toSeconds() > other.toSeconds()
