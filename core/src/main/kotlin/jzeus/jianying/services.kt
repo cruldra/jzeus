@@ -1,6 +1,5 @@
 package jzeus.jianying
 
-import jzeus.console.printToConsole
 import jzeus.datetime.Timeout
 import jzeus.datetime.Timeouts
 import jzeus.failure.failure

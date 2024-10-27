@@ -3,7 +3,6 @@ package jzeus.net
 import cn.hutool.core.io.FileUtil
 import cn.hutool.core.io.unit.DataSize
 import cn.hutool.core.io.unit.DataSizeUtil
-import jzeus.console.printToConsole
 import jzeus.log.LoggerDelegate
 import jzeus.progress.Progress
 import jzeus.task.async
