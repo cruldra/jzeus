@@ -14,6 +14,7 @@ package jzeus.failure
  * @property cause  异常原因
  * @property referenceUrl  异常参考链接
  */
+@Deprecated("推荐使用专用自定义异常")
 open class Failure(
     open val code: Int,
     override val message: String? = null,
