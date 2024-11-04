@@ -6,6 +6,7 @@ import io.javalin.http.Handler
 import io.javalin.plugin.Plugin
 import java.util.function.Consumer
 
+
 class AuthenticationPlugin(userConfig: Consumer<Config>? = null) :
     Plugin<AuthenticationPlugin.Config>(userConfig, Config()) {
 
