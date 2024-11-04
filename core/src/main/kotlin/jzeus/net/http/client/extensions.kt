@@ -4,7 +4,6 @@ import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Logger
 import jzeus.failure.failure
 import jzeus.json.objectMapper
-import jzeus.log.LoggerDelegate
 import jzeus.net.http.client.retrofit2.FileConverterFactory
 import jzeus.net.http.client.retrofit2.RawStringConverterFactory
 import jzeus.os.getSystemProxy
@@ -30,6 +29,15 @@ fun OkHttpClient.Builder.addExceptionInterceptor(block: Response.() -> Pair<Int,
         addInterceptor(ExceptionInterceptor(block))
     }
 
+fun OkHttpClient.Builder.addCurlInterceptor(logger: org.slf4j.Logger): OkHttpClient.Builder {
+    addInterceptor(CurlInterceptor(object : Logger {
+        override fun log(message: String) {
+            logger.info(message)
+        }
+    }))
+    return this
+}
+
 fun OkHttpClient.Builder.addInterceptorBefore(
     beforeClass: Class<out Interceptor>,
     interceptor: Interceptor
@@ -42,15 +50,9 @@ fun OkHttpClient.Builder.addInterceptorBefore(
     }
 
 fun createHttpClient(block: OkHttpClient.Builder.() -> Unit = {}) = OkHttpClient.Builder().apply {
-    val log by LoggerDelegate()
     callTimeout(Duration.ofMinutes(10))
     readTimeout(Duration.ofMinutes(10))
     connectTimeout(Duration.ofSeconds(30))
-    addInterceptor(CurlInterceptor(object : Logger {
-        override fun log(message: String) {
-            log.info(message)
-        }
-    }))
 }.apply(block).build()
 
 fun Retrofit.Builder.addConverterFactoryBefore(
