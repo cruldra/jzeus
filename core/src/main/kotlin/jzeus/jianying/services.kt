@@ -17,6 +17,8 @@ import jzeus.task.retry
 import jzeus.task.wait
 import jzeus.win32.WindowState
 import jzeus.win32.setWindowState
+import retrofit2.http.Body
+import retrofit2.http.POST
 import java.io.File
 
 
@@ -24,86 +26,74 @@ interface ClickniumService {
 
     /**
      * 点击元素
-     *
-     * @param locator 定位器
-     * @param index 元素索引
-     * @param timeout 超时时间,单位为`秒`,默认为`30`秒
      */
-    fun click(locator: String, index: Int? = null, timeout: Int = 30)
+    @POST("/click_ui_element")
+    fun click(@Body payloads: ClickUiElementRequest)
 
 
     /**
      * 将鼠标悬停在元素上
-     * @param locator 定位器
-     * @param index 元素索引
-     * @param timeout 超时时间,单位为`秒`,默认为`30`秒
      */
-    fun hover(locator: String, index: Int? = null, timeout: Int = 30)
+    @POST("/hover_ui_element")
+    fun hover(@Body payloads: ClickUiElementRequest)
 
 
     /**
      * 判断元素是否存在
-     * @param locator 定位器
-     * @param timeout 超时时间,单位为`秒`,默认为`30`秒
      * @return 是否存在
      */
-    fun exists(locator: String, timeout: Int = 30): Boolean
+    @POST("/ui_element_exists")
+    fun exists(@Body payloads: ClickUiElementRequest): Boolean
 
 
     /**
      * 输入文本
-     * @param locator 定位器
-     * @param text 文本
-     * @param timeout 超时时间,单位为`秒`,默认为`30`秒
      */
-    fun typeText(locator: String, text: String, timeout: Int = 30)
+    @POST("/type_text_into_ui_element")
+    fun typeText(@Body payloads: TypeTextRequest)
 
 
     /**
      * 设置`clicknium`的授权码
-     * @param license   授权码
      */
-    fun setLicense(license: String)
+    @POST("/set_clicknium_license")
+    fun setLicense(@Body payloads: SetClickniumLicenseRequest)
 
 
     /**
      * 按下键盘按键
-     * @param key 按键
      */
-    fun keyDown(key: String)
+    @POST("/key_down")
+    fun keyDown(@Body payloads: KeyRequest)
 
 
     /**
      * 释放键盘按键
-     * @param key 按键
      */
-    fun keyUp(key: String)
+    @POST("/key_up")
+    fun keyUp(@Body payloads: KeyRequest)
 
     /**
-     * 激活窗口,[定位器][locator]必须是一个窗口
-     * @param locator 定位器
+     * 激活窗口
      */
     @Deprecated(
         "不太稳定,用jzeus.win32.ExtensionsKt.setWindowState代替"
     )
-    fun activateWindow(locator: String, timeout: Int = 30)
+    @POST("/set_clicknium_license")
+    fun activateWindow(@Body payloads: ClickUiElementRequest)
 
 
     /**
      * 窗口最大化
-     * @param locator 定位器
-     * @param maxBtnLocator 最大化按钮定位器
-     * @param timeout 超时时间,单位为`秒`,默认为`30`秒
      */
-    fun windowMaximize(locator: String, maxBtnLocator: String, timeout: Int = 30)
+    @POST("/window_maximize")
+    fun windowMaximize(@Body payloads: WindowMaximizeRequest)
 
     /**
      * 点击屏幕上的图片
-     * @param imgPath 图片路径
-     * @param confidence 置信度
-     * @param   times 点击次数
      */
-    fun clickImg(imgPath: String, confidence: Float = 0.8f, times: Int = 1)
+    @POST("/click_img")
+    fun clickImg(@Body payloads: ClickImageRequest)
 }
 
 interface UIElementLocators
@@ -207,8 +197,21 @@ class JianyingDesktop(
         if (res) {
             //clickniumService.activateWindow(locators.mainWindow, timeout =180 )
             setWindowState(PROCESS_NAME.value, WindowState.SHOW)
-            runCatching { clickniumService.click(locators.closeUpdateWindowBtn, timeout = 2) }
-            runCatching { clickniumService.click(locators.closeDraftListErrorDialogBtn, timeout = 2) }
+
+            runCatching {
+                clickniumService.click(
+                    ClickUiElementRequest(
+                        locators = locators.closeUpdateWindowBtn, timeout = 2
+                    )
+                )
+            }
+            runCatching {
+                clickniumService.click(
+                    ClickUiElementRequest(
+                        locators = locators.closeDraftListErrorDialogBtn, timeout = 2
+                    )
+                )
+            }
         }
         return res
     }
@@ -241,38 +244,82 @@ class JianyingDesktop(
         range.forEach { index ->
             //如果是第一个文本片段，需要先hover一下，然后按下ctrl键
             if (index == range.first) {
-                clickniumService.hover(locators.clipWindowTextSegment, index)
-                clickniumService.keyDown("ctrl")
+                clickniumService.hover(
+                    ClickUiElementRequest(
+                        locators = locators.clipWindowTextSegment, index = index
+                    )
+                )
+
+                clickniumService.keyDown(KeyRequest("ctrl"))
             }
-            clickniumService.click(locators.clipWindowTextSegment, index)
+            clickniumService.click(
+                ClickUiElementRequest(
+                    locators = locators.clipWindowTextSegment, index = index
+                )
+            )
         }
-        clickniumService.keyUp("ctrl")
+        clickniumService.keyUp(KeyRequest("ctrl"))
     }
 
     fun openDraft(draft: Draft.Draft) {
         this.draft = draft
         raiseForNotRunning()
         //如果搜索框不可见,则先点击搜索按钮
-        if (!clickniumService.exists(locators.draftSearchBox))
-            clickniumService.click(locators.draftSearchButton)
+
+        if (!clickniumService.exists(
+                ClickUiElementRequest(
+                    locators = locators.draftSearchBox,
+                )
+            )
+        ) clickniumService.click(
+            ClickUiElementRequest(
+                locators = locators.draftSearchButton,
+            )
+        )
         //输入草稿名称
-        clickniumService.typeText(locators.draftSearchBox, draft.name)
+        clickniumService.typeText(
+            TypeTextRequest(
+                locators = locators.draftSearchBox,
+                text = draft.name,
+            )
+        )
         //在最多10秒内等待草稿列表中的第一个元素出现
+
         val res = wait(10, Timeouts.ONE_SECOND) {
-            if (clickniumService.exists(locators.draftListFirstElement))
-                true
+            if (clickniumService.exists(
+                    ClickUiElementRequest(
+                        locators = locators.draftListFirstElement,
+                    )
+                )
+            ) true
             else null
         } ?: failure("草稿打开失败,因为没有定位到草稿元素")
         //然后点击草稿列表中的第一个元素
-        clickniumService.click(locators.draftListFirstElement)
+
+        clickniumService.click(
+            ClickUiElementRequest(
+                locators = locators.draftListFirstElement,
+            )
+        )
         //最后在最多10秒内等待剪辑窗口出现
         wait(10, Timeouts.ONE_SECOND) {
-            if (clickniumService.exists(locators.clipWindow))
-                true
+
+            if (clickniumService.exists(
+                    ClickUiElementRequest(
+                        locators = locators.clipWindow,
+                    )
+                )
+            ) true
             else null
         } ?: failure("草稿打开失败,因为剪辑窗口未打开")
         //最大化剪辑窗口
-        clickniumService.windowMaximize(locators.clipWindow, locators.clipWindowMaxBtn)
+
+        clickniumService.windowMaximize(
+            WindowMaximizeRequest(
+                locators = locators.clipWindow,
+                maxBtnLocator = locators.clipWindowMaxBtn
+            )
+        )
     }
 
     /**
@@ -283,9 +330,7 @@ class JianyingDesktop(
      * @return 数字人视频文件
      */
     fun addDigitalHuman(
-        digitalHumanIndex: Int = 2,
-        audioIndex: Int = 1,
-        timeout: Timeout = Timeouts.minutes(10)
+        digitalHumanIndex: Int = 2, audioIndex: Int = 1, timeout: Timeout = Timeouts.minutes(10)
     ): File {
         //必须先打开草稿
         raiseForDraftNull()
@@ -296,44 +341,93 @@ class JianyingDesktop(
             it.segments
         }.size)
         //3秒后点击右上方"数字人"标签页
-        clickniumService.sleep(3).clickImg(locators.clipWindowDigitalHumanTab)
+
+        clickniumService.sleep(3).clickImg(
+            ClickImageRequest(
+                imgPath = locators.clipWindowDigitalHumanTab
+            )
+        )
         //在最多5秒内等待数字人列表出现
         wait(5, Timeouts.ONE_SECOND) {
-            if (clickniumService.exists(locators.clipWindowDigitalHumanListFirst))
-                true
+            if (clickniumService.exists(
+                    ClickUiElementRequest(
+                        locators = locators.clipWindowDigitalHumanListFirst
+                    )
+                )
+            ) true
             else null
         } ?: failure("数字人视频生成失败,因为数字人列表未出现")
         //然后点击
-        clickniumService.click(locators.clipWindowDigitalHumanListFirst, digitalHumanIndex)
+
+        clickniumService.click(
+            ClickUiElementRequest(
+                locators = locators.clipWindowDigitalHumanListFirst,
+                index = digitalHumanIndex
+            )
+        )
         //3秒后点击"添加数字人"按钮
-        clickniumService.sleep(3).clickImg(locators.clipWindowAddDigitalHumanBtn)
+
+        clickniumService.sleep(3).clickImg(
+            ClickImageRequest(
+                imgPath = locators.clipWindowAddDigitalHumanBtn
+            )
+        )
         //在最多30秒内等待视频轨道出现
         wait(30, Timeouts.ONE_SECOND) {
-            if (clickniumService.exists(locators.clipWindowVideoTrack))
-                true
+            if (clickniumService.exists(
+                    ClickUiElementRequest(
+                        locators = locators.clipWindowVideoTrack,
+                    )
+                )
+            ) true
             else null
         } ?: failure("数字人视频生成失败,选择数字人模板时出错")
         //选中视频轨道
-        clickniumService.click(locators.clipWindowVideoTrack)
+
+        clickniumService.click(
+            ClickUiElementRequest(
+                locators = locators.clipWindowVideoTrack,
+            )
+        )
         //3秒后点击右上方"更换音色"标签页
-        clickniumService.sleep(3).clickImg(locators.clipWindowChangeSoundTab)
+
+        clickniumService.sleep(3).clickImg(
+            ClickImageRequest(
+                imgPath = locators.clipWindowChangeSoundTab
+            )
+        )
         //在最多5秒内等待音色列表出现
         wait(5, Timeouts.ONE_SECOND) {
-            if (clickniumService.exists(locators.clipWindowSoundListFirst))
-                true
+
+            if (clickniumService.exists(
+                    ClickUiElementRequest(
+                        locators = locators.clipWindowSoundListFirst,
+                    )
+                )
+            ) true
             else null
         } ?: failure("数字人视频生成失败,选择音色时出错")
         //然后点击音色
-        clickniumService.click(locators.clipWindowSoundListFirst, audioIndex)
+
+        clickniumService.click(
+            ClickUiElementRequest(
+                locators = locators.clipWindowSoundListFirst,
+                index = audioIndex
+            )
+        )
         //3秒后点击"添加音色"按钮
-        clickniumService.sleep(3).clickImg(locators.clipWindowAddSoundBtn)
+
+        clickniumService.sleep(3).clickImg(
+            ClickImageRequest(
+                imgPath = locators.clipWindowAddSoundBtn
+            )
+        )
         //最后在指定超时时间内等待视频文件生成
         val file = wait(timeout.duration.seconds.toInt(), Timeouts.ONE_SECOND) {
             try {
                 val contentJsonFile = this.draft?.files?.contentJsonFile ?: failure("草稿文件错误")
                 val taskId = objectMapper.readValue(
-                    contentJsonFile,
-                    Draft.Content::class.java
+                    contentJsonFile, Draft.Content::class.java
                 ).materials.digitalHumans[0].localTaskId
                 contentJsonFile.siblingFile("/Resources/digitalHuman/${taskId}.mp4").raiseForNotExists()
             } catch (e: Exception) {

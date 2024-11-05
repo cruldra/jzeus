@@ -1764,3 +1764,40 @@ sealed interface Draft {
         )
     }
 }
+
+data class ClickUiElementRequest(
+    val locators: String,
+    val index: Int? = null,
+    val timeout: Int = 30
+)
+
+data class TypeTextRequest(
+    val locators: String,
+    val text: String,
+    val timeout: Int = 30,
+)
+
+data class SetClickniumLicenseRequest(
+    @JsonProperty("license_str")
+    val licenseStr: String
+)
+
+data class WindowMaximizeRequest(
+    val locators: String,
+    @JsonProperty("max_btn_locator")
+    val maxBtnLocator: String,
+    val timeout: Int = 30
+)
+
+data class KeyRequest(
+    val key: String
+)
+
+data class ClickImageRequest(
+    @JsonProperty("img_path")
+    val imgPath: String,
+
+    val confidence: Float = 0.8f,
+
+    val times: Int = 1
+)
