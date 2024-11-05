@@ -17,6 +17,7 @@ import jzeus.task.retry
 import jzeus.task.wait
 import jzeus.win32.WindowState
 import jzeus.win32.setWindowState
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 import java.io.File
@@ -28,14 +29,14 @@ interface ClickniumService {
      * 点击元素
      */
     @POST("/click_ui_element")
-    fun click(@Body payloads: ClickUiElementRequest)
+    fun click(@Body payloads: ClickUiElementRequest): Call<Result>
 
 
     /**
      * 将鼠标悬停在元素上
      */
     @POST("/hover_ui_element")
-    fun hover(@Body payloads: ClickUiElementRequest)
+    fun hover(@Body payloads: ClickUiElementRequest): Call<Result>
 
 
     /**
@@ -43,35 +44,35 @@ interface ClickniumService {
      * @return 是否存在
      */
     @POST("/ui_element_exists")
-    fun exists(@Body payloads: ClickUiElementRequest): Boolean
+    fun exists(@Body payloads: ClickUiElementRequest): Call<Result>
 
 
     /**
      * 输入文本
      */
     @POST("/type_text_into_ui_element")
-    fun typeText(@Body payloads: TypeTextRequest)
+    fun typeText(@Body payloads: TypeTextRequest): Call<Result>
 
 
     /**
      * 设置`clicknium`的授权码
      */
     @POST("/set_clicknium_license")
-    fun setLicense(@Body payloads: SetClickniumLicenseRequest)
+    fun setLicense(@Body payloads: SetClickniumLicenseRequest): Call<Result>
 
 
     /**
      * 按下键盘按键
      */
     @POST("/key_down")
-    fun keyDown(@Body payloads: KeyRequest)
+    fun keyDown(@Body payloads: KeyRequest): Call<Result>
 
 
     /**
      * 释放键盘按键
      */
     @POST("/key_up")
-    fun keyUp(@Body payloads: KeyRequest)
+    fun keyUp(@Body payloads: KeyRequest): Call<Result>
 
     /**
      * 激活窗口
@@ -80,20 +81,20 @@ interface ClickniumService {
         "不太稳定,用jzeus.win32.ExtensionsKt.setWindowState代替"
     )
     @POST("/set_clicknium_license")
-    fun activateWindow(@Body payloads: ClickUiElementRequest)
+    fun activateWindow(@Body payloads: ClickUiElementRequest): Call<Result>
 
 
     /**
      * 窗口最大化
      */
     @POST("/window_maximize")
-    fun windowMaximize(@Body payloads: WindowMaximizeRequest)
+    fun windowMaximize(@Body payloads: WindowMaximizeRequest): Call<Result>
 
     /**
      * 点击屏幕上的图片
      */
     @POST("/click_img")
-    fun clickImg(@Body payloads: ClickImageRequest)
+    fun clickImg(@Body payloads: ClickImageRequest): Call<Result>
 }
 
 interface UIElementLocators
@@ -141,22 +142,22 @@ interface JianyingDesktopUIElementLocators : UIElementLocators {
 }
 
 open class DefaultJianyingDesktopUIElementLocators : JianyingDesktopUIElementLocators {
-    override val mainWindow: String = "locator.jianyingpro.剪映主窗口"
-    override val clipWindow: String = "locator.jianyingpro.剪辑窗口"
-    override val clipWindowTextSegment: String = "locator.jianyingpro.文本片段"
-    override val draftListFirstElement: String = "locator.jianyingpro.草稿列表中的第一个元素"
-    override val draftSearchBox: String = "locator.jianyingpro.草稿搜索框"
-    override var draftSearchButton: String = "locator.jianyingpro.草稿搜索按钮"
-    override val closeUpdateWindowBtn: String = "locator.jianyingpro.关闭版本更新窗口"
-    override val closeDraftListErrorDialogBtn: String = "locator.jianyingpro.草稿列表异常窗口上的取消按钮"
-    override val clipWindowMaxBtn: String = "locator.jianyingpro.剪辑窗口最大化按钮"
+    override val mainWindow: String = "jianyingpro.剪映主窗口"
+    override val clipWindow: String = "jianyingpro.剪辑窗口"
+    override val clipWindowTextSegment: String = "jianyingpro.文本片段"
+    override val draftListFirstElement: String = "jianyingpro.草稿列表中的第一个元素"
+    override val draftSearchBox: String = "jianyingpro.草稿搜索框"
+    override var draftSearchButton: String = "jianyingpro.草稿搜索按钮"
+    override val closeUpdateWindowBtn: String = "jianyingpro.关闭版本更新窗口"
+    override val closeDraftListErrorDialogBtn: String = "jianyingpro.草稿列表异常窗口上的取消按钮"
+    override val clipWindowMaxBtn: String = "jianyingpro.剪辑窗口最大化按钮"
     override val clipWindowDigitalHumanTab: String = ".locator/pyautogui/jianyingpro_img/1.png"
     override val clipWindowAddDigitalHumanBtn: String = ".locator/pyautogui/jianyingpro_img/generate.png"
-    override val clipWindowDigitalHumanListFirst: String = "locator.jianyingpro.数字人"
-    override val clipWindowSoundListFirst: String = "locator.jianyingpro.音色"
+    override val clipWindowDigitalHumanListFirst: String = "jianyingpro.数字人"
+    override val clipWindowSoundListFirst: String = "jianyingpro.音色"
     override val clipWindowAddSoundBtn: String = ".locator/pyautogui/jianyingpro_img/Start reading.png"
     override val clipWindowChangeSoundTab: String = ".locator/pyautogui/jianyingpro_img/change_sound_tab2.png"
-    override val clipWindowVideoTrack: String = "locator.jianyingpro.视频轨道"
+    override val clipWindowVideoTrack: String = "jianyingpro.视频轨道"
 }
 
 /**
@@ -203,14 +204,14 @@ class JianyingDesktop(
                     ClickUiElementRequest(
                         locators = locators.closeUpdateWindowBtn, timeout = 2
                     )
-                )
+                ).execute().body()
             }
             runCatching {
                 clickniumService.click(
                     ClickUiElementRequest(
                         locators = locators.closeDraftListErrorDialogBtn, timeout = 2
                     )
-                )
+                ).execute().body()
             }
         }
         return res
@@ -248,49 +249,49 @@ class JianyingDesktop(
                     ClickUiElementRequest(
                         locators = locators.clipWindowTextSegment, index = index
                     )
-                )
+                ).execute().body()
 
-                clickniumService.keyDown(KeyRequest("ctrl"))
+                clickniumService.keyDown(KeyRequest("ctrl")).execute().body()
             }
             clickniumService.click(
                 ClickUiElementRequest(
                     locators = locators.clipWindowTextSegment, index = index
                 )
-            )
+            ).execute().body()
         }
-        clickniumService.keyUp(KeyRequest("ctrl"))
+        clickniumService.keyUp(KeyRequest("ctrl")).execute().body()
     }
 
     fun openDraft(draft: Draft.Draft) {
         this.draft = draft
         raiseForNotRunning()
         //如果搜索框不可见,则先点击搜索按钮
-
-        if (!clickniumService.exists(
+        if (clickniumService.exists(
                 ClickUiElementRequest(
                     locators = locators.draftSearchBox,
                 )
-            )
+            ).execute().body()?.data == true
         ) clickniumService.click(
             ClickUiElementRequest(
                 locators = locators.draftSearchButton,
             )
-        )
+        ).execute().body()
         //输入草稿名称
         clickniumService.typeText(
             TypeTextRequest(
                 locators = locators.draftSearchBox,
                 text = draft.name,
             )
-        )
+        ).execute().body()
         //在最多10秒内等待草稿列表中的第一个元素出现
 
-        val res = wait(10, Timeouts.ONE_SECOND) {
+        val res = wait(10, Timeouts.seconds(5)) {
             if (clickniumService.exists(
                     ClickUiElementRequest(
                         locators = locators.draftListFirstElement,
+                        timeout = 5
                     )
-                )
+                ).execute().body()?.data == true
             ) true
             else null
         } ?: failure("草稿打开失败,因为没有定位到草稿元素")
@@ -300,7 +301,7 @@ class JianyingDesktop(
             ClickUiElementRequest(
                 locators = locators.draftListFirstElement,
             )
-        )
+        ).execute().body()
         //最后在最多10秒内等待剪辑窗口出现
         wait(10, Timeouts.ONE_SECOND) {
 
@@ -308,7 +309,7 @@ class JianyingDesktop(
                     ClickUiElementRequest(
                         locators = locators.clipWindow,
                     )
-                )
+                ).execute().body()?.data == true
             ) true
             else null
         } ?: failure("草稿打开失败,因为剪辑窗口未打开")
@@ -319,7 +320,7 @@ class JianyingDesktop(
                 locators = locators.clipWindow,
                 maxBtnLocator = locators.clipWindowMaxBtn
             )
-        )
+        ).execute().body()
     }
 
     /**
@@ -346,14 +347,14 @@ class JianyingDesktop(
             ClickImageRequest(
                 imgPath = locators.clipWindowDigitalHumanTab
             )
-        )
+        ).execute().body()
         //在最多5秒内等待数字人列表出现
         wait(5, Timeouts.ONE_SECOND) {
             if (clickniumService.exists(
                     ClickUiElementRequest(
                         locators = locators.clipWindowDigitalHumanListFirst
                     )
-                )
+                ).execute().body()?.data == true
             ) true
             else null
         } ?: failure("数字人视频生成失败,因为数字人列表未出现")
@@ -364,21 +365,21 @@ class JianyingDesktop(
                 locators = locators.clipWindowDigitalHumanListFirst,
                 index = digitalHumanIndex
             )
-        )
+        ).execute().body()
         //3秒后点击"添加数字人"按钮
 
         clickniumService.sleep(3).clickImg(
             ClickImageRequest(
                 imgPath = locators.clipWindowAddDigitalHumanBtn
             )
-        )
+        ).execute().body()
         //在最多30秒内等待视频轨道出现
         wait(30, Timeouts.ONE_SECOND) {
             if (clickniumService.exists(
                     ClickUiElementRequest(
                         locators = locators.clipWindowVideoTrack,
                     )
-                )
+                ).execute().body()?.data == true
             ) true
             else null
         } ?: failure("数字人视频生成失败,选择数字人模板时出错")
@@ -388,14 +389,14 @@ class JianyingDesktop(
             ClickUiElementRequest(
                 locators = locators.clipWindowVideoTrack,
             )
-        )
+        ).execute().body()
         //3秒后点击右上方"更换音色"标签页
 
         clickniumService.sleep(3).clickImg(
             ClickImageRequest(
                 imgPath = locators.clipWindowChangeSoundTab
             )
-        )
+        ).execute().body()
         //在最多5秒内等待音色列表出现
         wait(5, Timeouts.ONE_SECOND) {
 
@@ -403,7 +404,7 @@ class JianyingDesktop(
                     ClickUiElementRequest(
                         locators = locators.clipWindowSoundListFirst,
                     )
-                )
+                ).execute().body()?.data == true
             ) true
             else null
         } ?: failure("数字人视频生成失败,选择音色时出错")
@@ -414,14 +415,14 @@ class JianyingDesktop(
                 locators = locators.clipWindowSoundListFirst,
                 index = audioIndex
             )
-        )
+        ).execute().body()
         //3秒后点击"添加音色"按钮
 
         clickniumService.sleep(3).clickImg(
             ClickImageRequest(
                 imgPath = locators.clipWindowAddSoundBtn
             )
-        )
+        ).execute().body()
         //最后在指定超时时间内等待视频文件生成
         val file = wait(timeout.duration.seconds.toInt(), Timeouts.ONE_SECOND) {
             try {

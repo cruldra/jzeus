@@ -1801,3 +1801,11 @@ data class ClickImageRequest(
 
     val times: Int = 1
 )
+
+
+data class Result(
+    val success: Boolean,
+    val message: String? = null,
+    val data: Any? = null,
+    val error: String? = null,
+)
