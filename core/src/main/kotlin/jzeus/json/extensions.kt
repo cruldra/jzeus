@@ -19,7 +19,6 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule
 import com.github.victools.jsonschema.generator.*
 import com.github.victools.jsonschema.module.jakarta.validation.JakartaValidationModule
 import com.github.victools.jsonschema.module.jakarta.validation.JakartaValidationOption
-import jzeus.any.Range
 import jzeus.datetime.PopularDatetimeFormat
 import jzeus.datetime.dateFormatter
 import jzeus.datetime.dateTimeFormatter
@@ -61,8 +60,6 @@ val objectMapper = ObjectMapper().apply {
     configure(WRITE_DATES_AS_TIMESTAMPS, false)
 
     val module = SimpleModule()
-    module.addSerializer(Range::class.java, RangeSerializer())
-    module.addDeserializer(Range::class.java, RangeDeserializer())
     registerModule(module)
 }
 
