@@ -3,7 +3,7 @@ package jzeus.log
 import org.slf4j.Logger
 import org.slf4j.event.Level
 
-fun <T> T.log(logger: Logger, level: Level = Level.INFO, message: (T) -> String): T {
+fun <T> T.log(logger: Logger, level: Level = Level.INFO, message: T.(T) -> String): T {
     when (level) {
         Level.INFO -> logger.info(message(this))
         Level.WARN -> logger.warn(message(this))

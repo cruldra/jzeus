@@ -26,3 +26,5 @@ fun <T> T.raiseForNull(message: String): Any? {
     if (this == null) failure<Any>(message)
     return this
 }
+
+fun <T> T?.toResult(): Result<T> = if (this == null) Result.failure(NullPointerException()) else Result.success(this)

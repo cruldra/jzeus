@@ -1,6 +1,8 @@
 package jzeus.str
 
 import org.apache.commons.exec.CommandLine
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 
@@ -38,17 +40,11 @@ val String.isUrl: Boolean
         return urlPattern.matcher(this).matches()
     }
 
-fun main() {
-    val urls = listOf(
-        "https://www.example.com",
-        "http://subdomain.example.co.uk:8080",
-        "https://example.com/path/to/page?name=value&name2=value2",
-        "invalid url",
-        "ftp://example.com",
-        "just.words"
-    )
-
-    urls.forEach { url ->
-        println("$url is ${if (url.isUrl) "valid" else "invalid"}")
-    }
-}
+/**
+ * 进行[URL编码](https://www.w3schools.com/tags/ref_urlencode.ASP)以处理特殊字符和非`ASCII`字符
+ * @author dongjak
+ * @created 2024/11/08
+ * @version 1.0
+ * @since 1.0
+ */
+fun String.urlEncode(): String = URLEncoder.encode(this, StandardCharsets.UTF_8)
