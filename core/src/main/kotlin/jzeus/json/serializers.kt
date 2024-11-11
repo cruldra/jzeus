@@ -92,3 +92,17 @@ class EnumSerializer : JsonSerializer<Enum<*>>() {
         gen.writeObject(src.toMap())
     }
 }
+
+class RangeSerializer : JsonSerializer<Range<*>>() {
+    @Throws(IOException::class)
+    override fun serialize(
+        src: Range<*>,
+        gen: JsonGenerator,
+        serializers: SerializerProvider
+    ) {
+        gen.writeStartArray()
+        gen.writeString(src.min.toString())
+        gen.writeString(src.max.toString())
+        gen.writeEndArray()
+    }
+}
