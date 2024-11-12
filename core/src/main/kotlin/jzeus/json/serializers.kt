@@ -94,15 +94,15 @@ class EnumSerializer : JsonSerializer<Enum<*>>() {
 }
 
 class RangeSerializer : JsonSerializer<Range<*>>() {
-    @Throws(IOException::class)
     override fun serialize(
         src: Range<*>,
         gen: JsonGenerator,
         serializers: SerializerProvider
     ) {
         gen.writeStartArray()
-        gen.writeString(src.min.toString())
-        gen.writeString(src.max.toString())
+        // 使用SerializerProvider来序列化，这样能保持原始类型信息
+        serializers.defaultSerializeValue(src.min, gen)
+        serializers.defaultSerializeValue(src.max, gen)
         gen.writeEndArray()
     }
 }
