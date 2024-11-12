@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
-import jzeus.any.Range
 import jzeus.enum.toMap
 import java.io.IOException
 import java.time.Duration
@@ -90,19 +89,5 @@ class EnumSerializer : JsonSerializer<Enum<*>>() {
         serializers: SerializerProvider
     ) {
         gen.writeObject(src.toMap())
-    }
-}
-
-class RangeSerializer : JsonSerializer<Range<*>>() {
-    override fun serialize(
-        src: Range<*>,
-        gen: JsonGenerator,
-        serializers: SerializerProvider
-    ) {
-        gen.writeStartArray()
-        // 使用SerializerProvider来序列化，这样能保持原始类型信息
-        serializers.defaultSerializeValue(src.min, gen)
-        serializers.defaultSerializeValue(src.max, gen)
-        gen.writeEndArray()
     }
 }
