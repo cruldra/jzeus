@@ -1,6 +1,7 @@
 package jzeus.db
 
 import io.ebean.DB
+import io.ebean.Database
 import io.ebean.PagedList
 
 fun <T : BaseModel> T.save(): T {
@@ -26,10 +27,12 @@ fun <T : BaseModel> Collection<T>.saveAll(): Collection<T> {
     DB.saveAll(this)
     return this
 }
+
 fun <T : BaseModel> Collection<T>.updateAll(): Collection<T> {
     DB.updateAll(this)
     return this
 }
+
 fun <T, R> PagedList<T>.map(mapper: (T) -> R): PagedList<R> {
     return object : PagedList<R> {
         override fun loadCount() = this@map.loadCount()
@@ -53,4 +56,11 @@ fun <T, R> PagedList<T>.toDataPage(mapper: (T) -> R): DataPage<R> {
         data = this.list.map(mapper),
         hasNext = this.hasNext()
     )
+}
+
+fun Database.transaction(block: () -> Unit) {
+    beginTransaction().use { transaction ->
+        block()
+        transaction.commit()
+    }
 }
