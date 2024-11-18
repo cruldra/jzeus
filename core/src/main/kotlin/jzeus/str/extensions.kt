@@ -49,3 +49,5 @@ val String.isUrl: Boolean
  */
 fun String.urlEncode(): String = URLEncoder.encode(this, StandardCharsets.UTF_8)
 fun String.toKebabCase(): String = this.replace("([a-z])([A-Z])".toRegex(), "$1-$2").lowercase()
+
+fun String.firstLowerCase(): String = this.replaceFirstChar { it.lowercase() }
