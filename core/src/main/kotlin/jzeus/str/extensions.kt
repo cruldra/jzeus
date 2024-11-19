@@ -1,6 +1,7 @@
 package jzeus.str
 
 import org.apache.commons.exec.CommandLine
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.time.format.DateTimeFormatter
@@ -51,3 +52,18 @@ fun String.urlEncode(): String = URLEncoder.encode(this, StandardCharsets.UTF_8)
 fun String.toKebabCase(): String = this.replace("([a-z])([A-Z])".toRegex(), "$1-$2").lowercase()
 
 fun String.firstLowerCase(): String = this.replaceFirstChar { it.lowercase() }
+
+/**
+ * 对字符串进行`bcrypt`加密
+ *
+ * 要使用这个方法,需要添加以下依赖:
+ *
+ * ```xml
+ * <dependency>
+ *     <groupId>org.springframework.security</groupId>
+ *     <artifactId>spring-security-crypto</artifactId>
+ *     <version>6.2.0</version>
+ * </dependency>
+ * ```
+ */
+fun String.bcryptHash(): String = BCryptPasswordEncoder().encode(this)
