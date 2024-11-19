@@ -131,7 +131,6 @@ class SaTokenForJavalin : SaTokenContext {
 object SaTokenConfigManager {
     fun init() {
         // 注册上下文
-        SaManager.setConfig(SaTokenConfig())
         SaManager.setSaTokenContext(SaTokenForJavalin())
 
         // 配置Sa-Token
