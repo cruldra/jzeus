@@ -1,5 +1,11 @@
 package jzeus.str
 
+import cn.hutool.core.text.UnicodeUtil
+import net.sourceforge.pinyin4j.PinyinHelper
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat
+import net.sourceforge.pinyin4j.format.HanyuPinyinToneType
+import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination
 import org.apache.commons.exec.CommandLine
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.net.URLEncoder
@@ -67,3 +73,69 @@ fun String.firstLowerCase(): String = this.replaceFirstChar { it.lowercase() }
  * ```
  */
 fun String.bcryptHash(): String = BCryptPasswordEncoder().encode(this)
+
+/**
+ *汉字转换为拼音，英文字符不变
+ *
+ * 要使用这个扩展函数,需要添加以下依赖:
+ * ```xml
+ *         <dependency>
+ *             <groupId>com.belerweb</groupId>
+ *             <artifactId>pinyin4j</artifactId>
+ *             <version>2.5.1</version>
+ *         </dependency>
+ * ```
+ */
+fun String.toPinyin(): String {
+    var pinyinName = ""
+    val nameChar = this.toCharArray()
+    val defaultFormat = HanyuPinyinOutputFormat()
+    defaultFormat.caseType = HanyuPinyinCaseType.LOWERCASE
+    defaultFormat.toneType = HanyuPinyinToneType.WITHOUT_TONE
+    for (i in nameChar.indices) {
+        if (nameChar[i].code > 128) {
+            try {
+                pinyinName += PinyinHelper.toHanyuPinyinStringArray(nameChar[i], defaultFormat)[0]
+            } catch (e: BadHanyuPinyinOutputFormatCombination) {
+                e.printStackTrace()
+            }
+
+        } else {
+            pinyinName += nameChar[i]
+        }
+    }
+    return pinyinName
+}
+
+/**
+ * 转换为unicode字符串
+ * @receiver 被转换的原字符串
+ * @return 转换过后的unicode字符串
+ */
+fun String.toUnicode(): String = UnicodeUtil.toUnicode(this)
+
+
+/**
+ * 将此字符串视为一个unicode字符串并转换为普通字符串
+ * @receiver 原unicode字符串
+ * @return 转换过后的普通字符串
+ */
+fun String.decodeUnicode(): String = UnicodeUtil.toString(this)
+
+
+/**
+ * 从此字符串中删除所有匹配的[子字符串][substr]
+ * @receiver String
+ * @param substr 要删除的字符串
+ * @return [String] 删除子串后的新字符串
+ */
+fun String.delete(substr: String) = this.replace(substr, "")
+
+
+/**
+ * 从此字符串中删除第一个匹配的[子字符串][substr]
+ * @receiver String
+ * @param substr 要删除的字符串
+ * @return [String] 删除子串后的新字符串
+ */
+fun String.deleteFirst(substr: String) = this.replaceFirst(substr, "")
