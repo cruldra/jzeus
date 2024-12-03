@@ -1770,6 +1770,12 @@ data class ClickUiElementRequest(
     val index: Int? = null,
     val timeout: Int = 30
 )
+data class ClickLocationRequest(
+    val x: Int,
+    val y: Int,
+    val times: Int = 1
+)
+
 
 data class TypeTextRequest(
     val locators: String,

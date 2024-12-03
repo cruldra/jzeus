@@ -31,6 +31,11 @@ interface ClickniumService {
     @POST("/click_ui_element")
     fun click(@Body payloads: ClickUiElementRequest): Call<Result>
 
+    /**
+     * 点击坐标
+     */
+    @POST("/click_location")
+    fun clickLocation(@Body payloads: ClickLocationRequest): Call<Result>
 
     /**
      * 将鼠标悬停在元素上
