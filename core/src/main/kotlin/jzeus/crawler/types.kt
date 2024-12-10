@@ -1,12 +1,10 @@
 package jzeus.crawler
 
-import jzeus.net.availablePort
-
 
 data class ChromeProperties(
     val executable: String,
     val userDataDir: String,
-    val cdpPort: Int = availablePort(),
+    val cdpPort: Int = 8654,
     val headless: Boolean = false,
     val windowWidth: Int = 1920,
     val windowHeight: Int = 1080,
